@@ -1,0 +1,493 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Inicio - Evaluación de Modelos de IA en Diagnóstico Médico{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Hero Section -->
+    <div class="hero-section mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <div class="hero-content">
+                    <span class="hero-badge">
+                        <i class="bi bi-mortarboard-fill me-2"></i>Proyecto de Grado
+                    </span>
+                    <h1 class="hero-title">Evaluación de Modelos de IA en Diagnóstico Médico</h1>
+                    <p class="hero-subtitle">
+                        Análisis comparativo de la veracidad de modelos de lenguaje gratuitos 
+                        en el diagnóstico médico. Una herramienta para investigar y comparar 
+                        el rendimiento de diferentes IA en casos clínicos reales.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <i class="bi bi-robot"></i>
+                            <span class="stat-number">10</span>
+                            <span class="stat-label">Modelos IA</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="bi bi-file-medical"></i>
+                            <span class="stat-number">+100</span>
+                            <span class="stat-label">Casos Clínicos</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="bi bi-check-circle"></i>
+                            <span class="stat-number">1</span>
+                            <span class="stat-label">Criterios</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="hero-visual">
+                    <div class="brain-animation">
+                        <i class="bi bi-brain"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN EVALUACIÓN -->
+    <div class="mb-5">
+        <div class="section-header mb-4">
+            <i class="bi bi-clipboard-pulse"></i>
+            <h2>Módulos de Evaluación</h2>
+        </div>
+        <div class="row g-4">
+            <!-- Casos Clínicos -->
+            <div class="col-md-6 col-lg-3">
+                <a href="/casos_clinicos" class="text-decoration-none">
+                    <div class="card card-feature h-100">
+                        <div class="card-icon">
+                            <i class="bi bi-file-medical"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Casos Clínicos</h5>
+                            <p class="card-text">Casos de estudio con historias clínicas y diagnósticos para evaluación</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Modelos IA -->
+            <div class="col-md-6 col-lg-3">
+                <a href="/modelos" class="text-decoration-none">
+                    <div class="card card-feature h-100">
+                        <div class="card-icon">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Modelos de IA</h5>
+                            <p class="card-text">Modelos de lenguaje gratuitos como ChatGPT, Claude, Gemini y más</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Especialidades -->
+            <div class="col-md-6 col-lg-3">
+                <a href="/especialidades" class="text-decoration-none">
+                    <div class="card card-feature h-100">
+                        <div class="card-icon">
+                            <i class="bi bi-heart-pulse"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Especialidades</h5>
+                            <p class="card-text">Especialidades médicas: Cardiología, Neurología, Pediatría, etc.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Criterios -->
+            <div class="col-md-6 col-lg-3">
+                <a href="/criterios" class="text-decoration-none">
+                    <div class="card card-feature h-100">
+                        <div class="card-icon">
+                            <i class="bi bi-clipboard-check"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Criterios</h5>
+                            <p class="card-text">Criterios de evaluación: precisión, coherencia, exhaustividad</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+
+            <!-- Dashboard -->
+            <div class="col-md-6 col-lg-3">
+                <a href="/dashboard" class="text-decoration-none">
+                    <div class="card card-feature h-100">
+                        <div class="card-icon">
+                            <i class="bi bi-speedometer2"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Dashboard</h5>
+                            <p class="card-text">Resumen estadístico y visual de los casos clínicos evaluados.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Puntajes -->
+            <div class="col-md-6 col-lg-3">
+                <a href="/puntajes_casos" class="text-decoration-none">
+                    <div class="card card-feature h-100">
+                        <div class="card-icon">
+                            <i class="bi bi-star"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Puntajes Casos</h5>
+                            <p class="card-text">Calificaciones y puntajes de casos</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SECCIÓN ADMINISTRATIVA -->
+    <div class="mb-5">
+        <div class="section-header mb-4">
+            <i class="bi bi-gear"></i>
+            <h2>Administración</h2>
+        </div>
+        <div class="row g-4">
+            <!-- Usuarios -->
+            <div class="col-md-6 col-lg-4">
+                <a href="/usuarios" class="text-decoration-none">
+                    <div class="card card-feature h-100">
+                        <div class="card-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Usuarios</h5>
+                            <p class="card-text">Gestión de usuarios del sistema y sus credenciales</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Roles -->
+            <div class="col-md-6 col-lg-4">
+                <a href="/roles" class="text-decoration-none">
+                    <div class="card card-feature h-100">
+                        <div class="card-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Roles</h5>
+                            <p class="card-text">Roles y permisos disponibles en el sistema</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del Proyecto -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="info-card">
+                <div class="info-icon">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <div class="info-content">
+                    <h5>Acerca del Proyecto</h5>
+                    <p>Este sistema forma parte de un proyecto de investigación para evaluar la veracidad de modelos de lenguaje (IA) gratuitos en el diagnóstico médico. Los resultados obtenidos permitirán comparar el rendimiento de diferentes modelos como ChatGPT, Claude, Gemini y otros en casos clínicos reales.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos para las tarjetas de característica -->
+<style>
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #06b6d4 0%, #2563eb 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 2rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+}
+
+.stat-item i {
+    font-size: 1.5rem;
+    color: #06b6d4;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.brain-animation {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, #06b6d4 0%, #2563eb 100%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.brain-animation i {
+    font-size: 4rem;
+    color: white;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 30px 10px rgba(6, 182, 212, 0.2); }
+}
+
+/* Section Headers */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-header i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+/* Feature Cards */
+.card-feature {
+    border: none;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card-feature:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.card-feature .card-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1.25rem 1.25rem 0;
+}
+
+.card-feature .card-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.card-feature .card-title {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.card-feature .card-text {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Info Card */
+.info-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.25rem;
+    border: 1px solid var(--border-color);
+}
+
+.info-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.info-icon i {
+    font-size: 1.25rem;
+    color: white;
+}
+
+.info-content h5 {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.info-content p {
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .hero-title {
+        font-size: 1.75rem;
+    }
+    
+    .hero-stats {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-section {
+        padding: 2rem;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .info-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .info-icon {
+        margin: 0 auto;
+    }
+}
+</style>
+<style>
+    .card-feature {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-feature::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #0D47A1 0%, #FF6B35 100%);
+    }
+
+    .card-feature:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-icon {
+        font-size: 2.5rem;
+        color: #FF6B35;
+        margin-bottom: 1rem;
+    }
+
+    .card-feature .card-title {
+        color: #0D47A1;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-feature .card-text {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .card-feature:hover .card-title {
+        color: #FF6B35;
+    }
+
+    a.text-decoration-none:hover .card-feature {
+        outline: none;
+    }
+</style>
+{% endblock %}

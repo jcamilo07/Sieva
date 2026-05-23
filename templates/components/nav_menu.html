@@ -1,0 +1,83 @@
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-brain me-2"></i>SIEVA
+        </a>
+    </div>
+</div>
+
+<input type="checkbox" title="Menu de navegacion" class="navbar-toggler" />
+
+<div class="nav-scrollable">
+    <nav class="nav flex-column">
+        <!-- HOME -->
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path == '/' }}" href="/">
+                <i class="bi bi-house-door-fill me-2"></i> Inicio
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path.startswith('/dashboard') }}" href="/dashboard">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+        </div>
+
+        <!-- SECCIÓN EVALUACIÓN -->
+        <div class="nav-section-header px-3">
+            <i class="bi bi-clipboard-pulse"></i> Evaluación de IA
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path.startswith('/modelos') }}" href="/modelos">
+                <i class="bi bi-robot me-2"></i> Modelos de IA
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path.startswith('/especialidades') }}" href="/especialidades">
+                <i class="bi bi-heart-pulse me-2"></i> Especialidades
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path.startswith('/casos_clinicos') }}" href="/casos_clinicos">
+                <i class="bi bi-file-medical me-2"></i> Casos Clínicos
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path.startswith('/criterios') }}" href="/criterios">
+                <i class="bi bi-check2-square me-2"></i> Criterios
+            </a>
+        </div>
+
+
+
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path.startswith('/puntajes_casos') }}" href="/puntajes_casos">
+                <i class="bi bi-bar-chart-line me-2"></i> Puntajes Casos
+                <span class="bi bi-list-nested-nav-menu"></span> Puntajes Casos
+
+            </a>
+        </div>
+
+        <!-- SECCIÓN ADMINISTRATIVA -->
+        <div class="nav-section-header px-3 mt-4">
+            <i class="bi bi-gear"></i> Administración
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path.startswith('/usuarios') }}" href="/usuarios">
+                <span class="bi bi-list-nested-nav-menu"></span> Usuarios
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link {{ 'active' if request.path.startswith('/roles') }}" href="/roles">
+                <span class="bi bi-list-nested-nav-menu"></span> Roles
+            </a>
+        </div>
+
+    </nav>
+</div>
