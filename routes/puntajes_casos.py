@@ -19,11 +19,14 @@ def index():
 
     registros = api.listar(TABLA, limite)
 
-    # Obtener listados para los combos y datos relacionados (still using ejecuciones etc.)
-    ejecuciones = api.listar('ejecuciones')
+    # Datos auxiliares para el formulario de creación/edición
     criterios = api.listar('criterios_evaluacion')
-    casos = api.listar('casos_clinicos')
-    modelos = api.listar('modelos')
+    casos     = api.listar('casos_clinicos')
+    modelos   = api.listar('modelos')
+    medicos   = api.listar('medico_experto')
+
+    # Diccionario id → nombre para resolución rápida en la tabla
+    medicos_dict = {m['id']: m.get('nombre', 'Sin nombre') for m in medicos}
 
     mostrar_formulario = accion in ('nuevo', 'editar')
     editando = accion == 'editar'
@@ -34,10 +37,11 @@ def index():
 
     return render_template('pages/puntajes_casos.html',
         registros=registros,
-        ejecuciones=ejecuciones,
         criterios=criterios,
         casos=casos,
         modelos=modelos,
+        medicos=medicos,
+        medicos_dict=medicos_dict,
         mostrar_formulario=mostrar_formulario,
         editando=editando,
         registro=registro,
@@ -47,9 +51,10 @@ def index():
 @bp.route('/puntajes_casos/crear', methods=['POST'])
 def crear():
     datos = {
-        'ejecucion_id': request.form.get('ejecucion_id', 0, type=int),
+        'caso_id':    request.form.get('caso_id', 0, type=int),
         'criterio_id': request.form.get('criterio_id', 0, type=int),
-        'puntaje': request.form.get('puntaje', 1, type=int)
+        'modelo_id':   request.form.get('modelo_id', 1, type=int),
+        'puntaje':     request.form.get('puntaje', 1, type=int)
     }
     exito, mensaje = api.crear(TABLA, datos)
     flash(mensaje, 'success' if exito else 'danger')
@@ -59,9 +64,9 @@ def crear():
 def actualizar():
     valor = request.form.get('id', 0, type=int)
     datos = {
-        'ejecucion_id': request.form.get('ejecucion_id', 0, type=int),
+        'caso_id':     request.form.get('caso_id', 0, type=int),
         'criterio_id': request.form.get('criterio_id', 0, type=int),
-        'puntaje': request.form.get('puntaje', 1, type=int)
+        'puntaje':     request.form.get('puntaje', 1, type=int)
     }
     exito, mensaje = api.actualizar(TABLA, CLAVE, valor, datos)
     flash(mensaje, 'success' if exito else 'danger')

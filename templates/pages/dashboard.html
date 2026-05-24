@@ -1,0 +1,822 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Dashboard · Criterio #1 Veracidad{% endblock %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+/* ══ OVERRIDE GLOBAL — FUERZA TEMA OSCURO SOBRE bootstrap + app.css ══ */
+body,
+html body,
+body .page,
+body main,
+body main .content,
+body article.content {
+  background-color: #141720 !important;
+  background: #141720 !important;
+  color: #f0f3fa !important;
+}
+
+/* ══ VARIABLES ══ */
+:root {
+  --bg-dark:      #141720;
+  --surf1:        #1a1f2e;
+  --surf2:        #252b3b;
+  --surf3:        #2e3548;
+  --bd:           #333d52;
+  --tp:           #f0f3fa;
+  --ts:           #8b9ab5;
+  --tm:           #566078;
+  --gold:         #f0b400;
+  --blue:         #3b6fd4;
+  --green:        #27ae60;
+  --amber:        #d4891a;
+  --red:          #c0392b;
+  --rcard:        10px;
+  --rsm:          6px;
+}
+
+/* ══ DASH ROOT ══ */
+.dash-root {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0 1.25rem 3rem;
+}
+
+/* ══ 1. HEADER CRITERIO ══ */
+.criterio-header {
+  background: linear-gradient(90deg,#1a2a5e,#1e3470 60%,#142255) !important;
+  border-bottom: 1px solid #2d4090;
+  padding: .85rem 1.5rem;
+  display: flex !important;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  border-radius: 8px;
+}
+.criterio-badge {
+  background: #2e4db8;
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .28rem .7rem;
+  border-radius: 4px;
+  letter-spacing: .05em;
+  white-space: nowrap;
+}
+.criterio-title { font-size:1.05rem; font-weight:700; color:#e8edff; white-space:nowrap; }
+.criterio-sep   { color:#4a6abf; }
+.criterio-desc  { font-size:.88rem; color:#8ba4e0; }
+
+/* ══ PROGRESO Y EMPTY STATE (NUEVO) ══ */
+.progress-banner {
+  background: rgba(26, 31, 46, 0.7) !important;
+  border: 1px solid var(--bd) !important;
+  border-radius: var(--rcard) !important;
+  padding: 1rem 1.25rem !important;
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(10px);
+}
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+.progress-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--tp);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.progress-title i {
+  color: var(--blue);
+  font-size: 1.05rem;
+}
+.progress-pct {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--blue);
+}
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: var(--surf3);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.6rem;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--green)) !important;
+  border-radius: 3px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.progress-disclaimer {
+  font-size: 0.74rem;
+  color: var(--ts);
+  line-height: 1.4;
+}
+.progress-disclaimer strong {
+  color: var(--tp);
+}
+
+.empty-state-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(20, 23, 32, 0.3) !important;
+  border: 1px dashed var(--bd) !important;
+  border-radius: var(--rsm) !important;
+}
+.empty-icon {
+  font-size: 2.2rem;
+  color: var(--tm);
+  margin-bottom: 0.75rem;
+}
+.empty-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--tp);
+  margin-bottom: 0.35rem;
+}
+.empty-desc {
+  font-size: 0.76rem;
+  color: var(--ts);
+  max-width: 320px;
+  line-height: 1.45;
+}
+
+/* ══ 2. KPI STRIP ══ */
+.kpi-strip {
+  display: grid !important;
+  grid-template-columns: repeat(5,1fr) !important;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+.kpi-card {
+  background: var(--surf1) !important;
+  border: 1px solid var(--bd) !important;
+  border-radius: var(--rcard) !important;
+  padding: 1rem 1.1rem .85rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: .35rem !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+.kpi-card:hover { transform: none !important; box-shadow: none !important; }
+.kpi-label-top  { font-size:.72rem; color:var(--ts); font-weight:500; display:flex; align-items:center; gap:.4rem; }
+.kpi-label-top i{ font-size:.9rem; color:var(--tm); }
+.kpi-value      { font-size:2rem !important; font-weight:800 !important; color:var(--tp) !important; line-height:1; }
+.kpi-value .kpi-star { color:var(--gold); font-size:1.2rem; }
+.kpi-sub        { font-size:.75rem; color:var(--tm); line-height:1.3; }
+
+/* ══ DASH-CARD BASE ══ */
+.dash-card {
+  background: var(--surf1) !important;
+  border: 1px solid var(--bd) !important;
+  border-radius: var(--rcard) !important;
+  padding: 1.25rem 1.4rem !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.35) !important;
+  transform: none !important;
+  transition: none !important;
+  margin-bottom: 1.1rem;
+}
+.dash-card:hover { transform: none !important; box-shadow: 0 2px 12px rgba(0,0,0,.35) !important; }
+.card-title-d  { font-size:1rem; font-weight:700; color:var(--tp); margin-bottom:.25rem; }
+.card-sub-d    { font-size:.78rem; color:var(--ts); margin-bottom:1.1rem; line-height:1.45; }
+
+/* ══ 3. ESCALA ══ */
+.escala-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5,1fr) !important;
+  gap: .75rem;
+  margin-top: .75rem;
+}
+.escala-item {
+  background: var(--surf2) !important;
+  border: 1px solid var(--bd) !important;
+  border-radius: var(--rsm) !important;
+  padding: .9rem .75rem;
+  text-align: center;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+.escala-item:hover { transform: none !important; }
+.escala-stars { font-size:1rem; margin-bottom:.45rem; }
+.s-fill       { color:var(--gold); }
+.s-empty      { color:#3a4155; }
+.escala-rating{ font-size:.82rem; font-weight:700; color:var(--tp); margin-bottom:.5rem; }
+.escala-desc  { font-size:.72rem; color:var(--ts); line-height:1.4; }
+
+/* ══ 4. TWO-COL GRID ══ */
+.two-col {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+.chart-wrap  { position:relative; height:270px; width:100%; }
+.scatter-wrap{ position:relative; height:300px; width:100%; }
+
+/* ══ 6. TABLA ══ */
+.perf-table { width:100%; border-collapse:collapse; font-size:.82rem; background:transparent !important; }
+.perf-table thead tr { border-bottom: 1px solid var(--bd); }
+.perf-table thead th {
+  color: var(--ts) !important;
+  font-weight: 600 !important;
+  font-size: .73rem !important;
+  padding: .55rem .6rem !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  background: transparent !important;
+  border: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+.perf-table tbody tr { border-bottom:1px solid rgba(51,61,82,.4); transition:background .15s; }
+.perf-table tbody tr:hover { background: var(--surf2) !important; }
+.perf-table td {
+  padding: .75rem .6rem !important;
+  vertical-align: middle !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--tp) !important;
+}
+.td-rank       { color:var(--tm); font-weight:700; font-size:.8rem; width:32px; }
+.td-model-name { font-weight:700; font-size:.88rem; color:var(--tp); }
+.td-model-ver  { font-size:.72rem; color:var(--tm); }
+.badge-dif     { display:inline-block; padding:.2rem .55rem; border-radius:4px; font-size:.72rem; font-weight:700; color:#fff; }
+.badge-bajo    { background: var(--green) !important; color:#fff !important; }
+.badge-medio   { background: var(--amber) !important; color:#fff !important; }
+.badge-alto    { background: var(--red)   !important; color:#fff !important; }
+.td-pct        { color:var(--ts); font-size:.82rem; }
+.prec-bar-wrap { display:flex; align-items:center; gap:.5rem; }
+.prec-bar-bg   { flex:1; height:5px; background:var(--surf3); border-radius:3px; min-width:60px; max-width:100px; overflow:hidden; }
+.prec-bar-fill { height:100%; background:var(--blue); border-radius:3px; }
+.prec-pct-val  { font-size:.82rem; font-weight:700; color:var(--tp); white-space:nowrap; }
+.stars-cell i  { font-size:.8rem; }
+.star-fill  { color:var(--gold); }
+.star-half  { color:var(--gold); }
+.star-empty { color:#3a4155; }
+.star-val   { font-size:.8rem; font-weight:700; color:var(--ts); margin-left:.2rem; }
+
+/* ══ 7. HEATMAP ══ */
+.heatmap-table { width:100%; border-collapse:collapse; font-size:.78rem; background:transparent !important; }
+.heatmap-table th {
+  color: var(--ts) !important;
+  font-weight: 600 !important;
+  font-size: .72rem !important;
+  padding: .45rem .5rem !important;
+  text-align: center !important;
+  border-bottom: 1px solid var(--bd) !important;
+  background: transparent !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+.heatmap-table th.row-label { text-align:left; min-width:70px; }
+.heatmap-table td {
+  text-align: center !important;
+  padding: .6rem .5rem !important;
+  font-weight: 600;
+  border: 1px solid var(--surf2) !important;
+  font-size: .78rem;
+}
+.heat-label-cell {
+  display: inline-block;
+  padding: .2rem .6rem;
+  border-radius: 5px;
+  color: #fff !important;
+  white-space: nowrap;
+  font-size: .78rem;
+  font-weight: 700;
+}
+.heat-bajo  { background: var(--green) !important; }
+.heat-medio { background: var(--amber) !important; }
+.heat-alto  { background: var(--red)   !important; }
+
+/* ══ 8. ESPECIALIDADES ══ */
+.esp-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3,1fr) !important;
+  gap: .4rem 1.2rem;
+  margin-top: .75rem;
+}
+.esp-row    { display:flex; align-items:center; gap:.5rem; padding:.3rem 0; border-bottom:1px solid rgba(51,61,82,.3); }
+.esp-nombre { flex:1; font-size:.78rem; color:var(--ts); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.esp-bar-bg { width:60px; height:4px; background:var(--surf3); border-radius:2px; flex-shrink:0; overflow:hidden; }
+.esp-bar-fill{ height:100%; background:var(--blue); border-radius:2px; }
+.esp-count  { font-size:.78rem; font-weight:700; color:var(--tp); width:18px; text-align:right; flex-shrink:0; }
+.esp-note   { margin-top:1rem; font-size:.73rem; color:var(--tm); display:flex; align-items:flex-start; gap:.4rem; }
+.esp-note i { flex-shrink:0; margin-top:1px; }
+
+/* ══ 9. FOOTER KPIs ══ */
+.footer-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(4,1fr) !important;
+  gap: 1rem;
+  margin-top: 1.1rem;
+  background: var(--surf2) !important;
+  border: 1px solid var(--bd) !important;
+  border-radius: var(--rcard) !important;
+  padding: 1rem 1.5rem !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+.footer-kpis:hover { transform: none !important; }
+.fkpi        { display:flex; flex-direction:column; gap:.25rem; }
+.fkpi-label  { font-size:.72rem; color:var(--tm); display:flex; align-items:center; gap:.35rem; }
+.fkpi-label i{ font-size:.85rem; }
+.fkpi-model  { font-size:1rem; font-weight:800; color:var(--tp); }
+.fkpi-sub    { font-size:.75rem; color:var(--tm); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width:1100px) {
+  .kpi-strip   { grid-template-columns: repeat(3,1fr) !important; }
+  .escala-grid { grid-template-columns: repeat(3,1fr) !important; }
+  .two-col     { grid-template-columns: 1fr !important; }
+  .esp-grid    { grid-template-columns: repeat(2,1fr) !important; }
+  .footer-kpis { grid-template-columns: repeat(2,1fr) !important; }
+}
+@media (max-width:700px) {
+  .kpi-strip   { grid-template-columns: repeat(2,1fr) !important; }
+  .escala-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .esp-grid    { grid-template-columns: 1fr !important; }
+  .footer-kpis { grid-template-columns: 1fr !important; }
+  .criterio-desc { display: none; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-root">
+
+  <!-- 1. HEADER -->
+  <div class="criterio-header">
+    <span class="criterio-badge">Criterio #1</span>
+    <span class="criterio-title">Veracidad</span>
+    <span class="criterio-sep"> · </span>
+    <span class="criterio-desc">Calidad de respuesta diagnóstica evaluada por médico especialista</span>
+  </div>
+
+  <!-- NUEVO: BANNER DE PROGRESO DE EVALUACIÓN (100% REAL) -->
+  <div class="progress-banner">
+    <div class="progress-header">
+      <div class="progress-title">
+        <i class="bi bi-activity"></i>
+        <span>Progreso de Calificación del Proyecto</span>
+      </div>
+      <div class="progress-pct">{{ progreso_evaluacion }}%</div>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" style="width: {{ progreso_evaluacion }}%;"></div>
+    </div>
+    <div class="progress-disclaimer">
+      Estado de la evaluación: Se han calificado <strong>{{ total_graded }}</strong> de los <strong>{{ total_casos }}</strong> casos del benchmark. Los análisis de precisión y veracidad se recalculan y muestran dinámicamente en tiempo real a medida que realizas la evaluación médica.
+    </div>
+  </div>
+
+  <!-- NUEVO: ALERTA DE DATOS VACÍOS SI NO HAY CALIFICACIONES AÚN -->
+  {% if total_graded == 0 %}
+  <div class="alert alert-warning d-flex align-items-center" role="alert" style="background: rgba(212, 137, 26, 0.1) !important; border: 1px solid rgba(212, 137, 26, 0.4) !important; color: #ffca28 !important; border-radius: var(--rcard); padding: 0.9rem 1.25rem; margin-bottom: 1.25rem; font-size: 0.8rem; gap: 0.75rem;">
+    <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.1rem; color: var(--amber); flex-shrink: 0;"></i>
+    <div>
+      <strong>Sin evaluaciones registradas:</strong> Aún no se han completado calificaciones en la sección de <a href="{{ url_for('casos_clinicos.index') }}" style="color: #ffca28 !important; text-decoration: underline; font-weight: 600;">Casos Clínicos</a>. Los gráficos y análisis se poblarán automáticamente con tus propios datos a medida que califiques los primeros casos.
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- 2. KPI STRIP -->
+  <div class="kpi-strip">
+    <div class="kpi-card">
+      <div class="kpi-label-top"><i class="bi bi-file-medical"></i> Casos clínicos</div>
+      <div class="kpi-value">{{ total_casos }}</div>
+      <div class="kpi-sub">registrados en total</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label-top"><i class="bi bi-cpu"></i> Modelos IA</div>
+      <div class="kpi-value">{{ total_modelos }}</div>
+      <div class="kpi-sub">activos en el sistema</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label-top"><i class="bi bi-crosshair2"></i> Precisión global</div>
+      <div class="kpi-value">{% if total_graded > 0 %}{{ precision_global }}%{% else %}0.0%{% endif %}</div>
+      <div class="kpi-sub">coincidencia Dx humano</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label-top"><i class="bi bi-star-half"></i> Veracidad promedio</div>
+      <div class="kpi-value">{% if total_graded > 0 %}{{ "%.2f"|format(veracidad_prom_global) }} <span class="kpi-star">★</span>{% else %}-- <span class="kpi-star" style="color: #3a4155;">★</span>{% endif %}</div>
+      <div class="kpi-sub">calificación médica</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label-top"><i class="bi bi-heart-pulse"></i> Especialidades</div>
+      <div class="kpi-value">{{ total_especialidades }}</div>
+      <div class="kpi-sub">áreas clínicas reales</div>
+    </div>
+  </div>
+
+  <!-- 3. ESCALA DE VERACIDAD -->
+  <div class="dash-card">
+    <div class="card-title-d">Escala de Veracidad — criterio de evaluación médica</div>
+    <div class="card-sub-d">El médico evaluador califica cada respuesta diagnóstica de la IA usando esta escala de 1 a 5 estrellas</div>
+    <div class="escala-grid">
+      <div class="escala-item">
+        <div class="escala-stars"><span class="s-fill">★</span><span class="s-empty">★★★★</span></div>
+        <div class="escala-rating">1 — Muy baja</div>
+        <div class="escala-desc">Diagnóstico incorrecto, sin justificación clínica</div>
+      </div>
+      <div class="escala-item">
+        <div class="escala-stars"><span class="s-fill">★★</span><span class="s-empty">★★★</span></div>
+        <div class="escala-rating">2 — Baja</div>
+        <div class="escala-desc">Diagnóstico parcialmente erróneo o incompleto</div>
+      </div>
+      <div class="escala-item">
+        <div class="escala-stars"><span class="s-fill">★★★</span><span class="s-empty">★★</span></div>
+        <div class="escala-rating">3 — Aceptable</div>
+        <div class="escala-desc">Diagnóstico razonable con argumentación básica</div>
+      </div>
+      <div class="escala-item">
+        <div class="escala-stars"><span class="s-fill">★★★★</span><span class="s-empty">★</span></div>
+        <div class="escala-rating">4 — Alta</div>
+        <div class="escala-desc">Diagnóstico correcto con buena fundamentación</div>
+      </div>
+      <div class="escala-item">
+        <div class="escala-stars"><span class="s-fill">★★★★★</span></div>
+        <div class="escala-rating">5 — Excelente</div>
+        <div class="escala-desc">Diagnóstico correcto, razonamiento clínico completo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. GRÁFICOS: PRECISIÓN + VERACIDAD -->
+  <div class="two-col">
+    <div class="dash-card">
+      <div class="card-title-d">Precisión diagnóstica por modelo</div>
+      <div class="card-sub-d">% de coincidencia con el diagnóstico del médico humano</div>
+      {% if total_graded > 0 %}
+      <div class="chart-wrap"><canvas id="chartPrecision"></canvas></div>
+      {% else %}
+      <div class="empty-state-wrap">
+        <i class="bi bi-bar-chart-line empty-icon"></i>
+        <div class="empty-title">Precisión diagnóstica en espera</div>
+        <div class="empty-desc">Las estadísticas de precisión diagnóstica (coincidencia con médico humano) se calcularán automáticamente a medida que califiques los casos de la IA.</div>
+      </div>
+      {% endif %}
+    </div>
+    <div class="dash-card">
+      <div class="card-title-d">Veracidad promedio por modelo</div>
+      <div class="card-sub-d">Calificación media del médico evaluador según criterio de Veracidad (1–5 ★)</div>
+      {% if total_graded > 0 %}
+      <div class="chart-wrap"><canvas id="chartVeracidad"></canvas></div>
+      {% else %}
+      <div class="empty-state-wrap">
+        <i class="bi bi-star empty-icon"></i>
+        <div class="empty-title">Veracidad promedio en espera</div>
+        <div class="empty-desc">La veracidad promedio (calificación media de 1 a 5 estrellas) se generará dinámicamente tan pronto como registres las primeras evaluaciones.</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 5. SCATTER -->
+  <div class="dash-card">
+    <div class="card-title-d">Veracidad vs. precisión diagnóstica — correlación</div>
+    <div class="card-sub-d">¿Los modelos mejor calificados en Veracidad son también los más precisos? Cada punto representa un modelo</div>
+    {% if total_graded > 0 %}
+    <div class="scatter-wrap"><canvas id="chartScatter"></canvas></div>
+    {% else %}
+    <div class="empty-state-wrap" style="height: 280px;">
+      <i class="bi bi-graph-up empty-icon"></i>
+      <div class="empty-title">Gráfico de dispersión en espera</div>
+      <div class="empty-desc">La correlación cruzada entre precisión y veracidad se proyectará aquí una vez que existan datos de evaluación para los modelos.</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- 6. TABLA DE RENDIMIENTO -->
+  <div class="dash-card">
+    <div class="card-title-d">Tabla de rendimiento — Veracidad y precisión por dificultad</div>
+    <div class="card-sub-d">Vista completa: calificación de Veracidad del médico + coincidencia diagnóstica por nivel</div>
+    <div style="overflow-x:auto; margin-top:.75rem;">
+      <table class="perf-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Modelo</th>
+            <th>Mejor en</th>
+            <th>Bajo</th>
+            <th>Medio</th>
+            <th>Alto</th>
+            <th>Precisión Dx</th>
+            <th>Veracidad (★)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in tabla_modelos %}
+          <tr>
+            <td class="td-rank">{{ m.rank }}</td>
+            <td>
+              <div class="td-model-name">{{ m.corto }}</div>
+              <div class="td-model-ver">{{ m.largo }}</div>
+            </td>
+            <td>
+              {% if m.graded_count > 0 %}
+              <span class="badge-dif badge-{{ m.mejor_en|lower }}">{{ m.mejor_en }}</span>
+              {% else %}
+              <span class="badge-dif" style="background: var(--surf3); color: var(--ts);">Pendiente</span>
+              {% endif %}
+            </td>
+            <td class="td-pct">{% if m.graded_count > 0 %}{{ m.bajo }}%{% else %}-{% endif %}</td>
+            <td class="td-pct">{% if m.graded_count > 0 %}{{ m.medio }}%{% else %}-{% endif %}</td>
+            <td class="td-pct">{% if m.graded_count > 0 %}{{ m.alto }}%{% else %}-{% endif %}</td>
+            <td>
+              <div class="prec-bar-wrap">
+                <div class="prec-bar-bg">
+                  <div class="prec-bar-fill" style="width:{{ m.global }}%;"></div>
+                </div>
+                <span class="prec-pct-val">{% if m.graded_count > 0 %}{{ m.global }}%{% else %}0.0%{% endif %}</span>
+              </div>
+            </td>
+            <td class="stars-cell">
+              {% if m.graded_count > 0 %}
+                {% for _ in range(m.stars_full) %}<i class="bi bi-star-fill star-fill"></i>{% endfor %}
+                {% if m.stars_half %}<i class="bi bi-star-half star-half"></i>{% endif %}
+                {% for _ in range(m.stars_empty) %}<i class="bi bi-star star-empty"></i>{% endfor %}
+                <span class="star-val">{{ "%.2f"|format(m.veracidad) }}</span>
+              {% else %}
+                {% for _ in range(5) %}<i class="bi bi-star star-empty"></i>{% endfor %}
+                <span class="star-val" style="color: var(--tm);">Sin calificar</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 7. MAPA DE CALOR -->
+  <div class="dash-card">
+    <div class="card-title-d">Mapa de calor — precisión diagnóstica por modelo y dificultad</div>
+    <div class="card-sub-d">Mayor intensidad = mayor coincidencia con el diagnóstico humano</div>
+    <div style="overflow-x:auto; margin-top:.75rem;">
+      <table class="heatmap-table">
+        <thead>
+          <tr>
+            <th class="row-label"></th>
+            {% for m in tabla_modelos %}
+            <th>{{ m.corto }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in heatmap_rows %}
+          <tr>
+            <td style="border:none !important; background:transparent !important; padding:.6rem .3rem !important;">
+              <span class="heat-label-cell heat-{{ row.nivel|lower }}">{{ row.nivel }}</span>
+            </td>
+            {% for celda in row.celdas %}
+            {% if celda.valor > 0 or total_graded > 0 %}
+            <td style="
+              background: rgba(41,98,207,{{ [celda.intensity / 100, 1]|min | round(2) }}) !important;
+              color: {% if celda.intensity > 30 %}#e8eeff{% else %}#8b9ab5{% endif %} !important;
+              min-width: 56px;
+            ">{{ celda.valor }}%</td>
+            {% else %}
+            <td style="
+              background: rgba(51, 61, 82, 0.15) !important;
+              color: var(--tm) !important;
+              min-width: 56px;
+            ">-</td>
+            {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 8. ESPECIALIDADES CLÍNICAS (100% DINÁMICO) -->
+  <div class="dash-card">
+    <div class="card-title-d">Distribución por especialidades clínicas</div>
+    <div class="card-sub-d">Casos del dataset clasificados por área médica · ordenados por frecuencia de casos asociados</div>
+    
+    {% if especialidades %}
+    <div class="esp-grid">
+      {% for esp_nombre, esp_count in especialidades %}
+      <div class="esp-row">
+        <span class="esp-nombre" title="{{ esp_nombre }}">{{ esp_nombre }}</span>
+        <div class="esp-bar-bg">
+          <div class="esp-bar-fill" style="width:{{ [esp_count / max_esp_count * 100, 100]|min }}%;"></div>
+        </div>
+        <span class="esp-count">{{ esp_count }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state-wrap" style="min-height: 120px; padding: 1.5rem; margin-top: 0.75rem;">
+      <i class="bi bi-tag empty-icon" style="font-size: 1.8rem; margin-bottom: 0.5rem;"></i>
+      <div class="empty-title" style="font-size: 0.85rem;">Sin especialidades asociadas</div>
+      <div class="empty-desc" style="font-size: 0.72rem; max-width: 400px;">No se han detectado asociaciones activas de especialidades en los casos clínicos de la base de datos REST API.</div>
+    </div>
+    {% endif %}
+
+    <div class="esp-note">
+      <i class="bi bi-info-circle"></i>
+      Un caso puede clasificarse en una o varias especialidades. La distribución refleja la cobertura clínica real de tu base de datos.
+    </div>
+  </div>
+
+  <!-- 9. FOOTER KPIs -->
+  <div class="footer-kpis">
+    <div class="fkpi">
+      <div class="fkpi-label"><i class="bi bi-trophy-fill" style="color:var(--gold);"></i> Mejor Veracidad</div>
+      <div class="fkpi-model">
+        {% if mejor_ver_modelo != "Pendiente" %}
+          {{ mejor_ver_modelo }}
+        {% else %}
+          Pendiente
+        {% endif %}
+      </div>
+      <div class="fkpi-sub">
+        {% if mejor_ver_modelo != "Pendiente" %}
+          {{ "%.2f"|format(mejor_ver_val) }} ★ · {{ mejor_ver_precision }}% precisión
+        {% else %}
+          0.00 ★ · 0.0% precisión
+        {% endif %}
+      </div>
+    </div>
+    <div class="fkpi">
+      <div class="fkpi-label"><i class="bi bi-bullseye" style="color:var(--red);"></i> Mejor precisión ALTO</div>
+      <div class="fkpi-model">
+        {% if mejor_prec_alto_modelo != "Pendiente" %}
+          {{ mejor_prec_alto_modelo }}
+        {% else %}
+          Pendiente
+        {% endif %}
+      </div>
+      <div class="fkpi-sub">
+        {% if mejor_prec_alto_modelo != "Pendiente" %}
+          {{ mejor_prec_alto_val }}% en casos difíciles
+        {% else %}
+          0.0% en casos difíciles
+        {% endif %}
+      </div>
+    </div>
+    <div class="fkpi">
+      <div class="fkpi-label"><i class="bi bi-arrow-down-circle" style="color:var(--amber);"></i> Mayor reto global</div>
+      <div class="fkpi-model">
+        {% if mayor_reto_label != "Pendiente" %}
+          {{ mayor_reto_label }}
+        {% else %}
+          Pendiente
+        {% endif %}
+      </div>
+      <div class="fkpi-sub">
+        {% if mayor_reto_label != "Pendiente" %}
+          {{ mayor_reto_val }}% precisión promedio
+        {% else %}
+          0.0% precisión promedio
+        {% endif %}
+      </div>
+    </div>
+    <div class="fkpi">
+      <div class="fkpi-label"><i class="bi bi-heart-pulse" style="color:var(--blue);"></i> Esp. más frecuente</div>
+      <div class="fkpi-model">{{ esp_mas_frecuente }}</div>
+      <div class="fkpi-sub">{{ esp_mas_freq_count }} casos en el dataset</div>
+    </div>
+  </div>
+
+</div><!-- /.dash-root -->
+
+<!-- ═══ CHART.JS ═══ -->
+{% if total_graded > 0 %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.color = '#8b9ab5';
+
+  const TICK  = '#8b9ab5';
+  const GRID  = 'rgba(51,61,82,0.6)';
+  const C_BAJO  = '#27ae60';
+  const C_MEDIO = '#d4891a';
+  const C_ALTO  = '#c0392b';
+
+  const TIP = {
+    backgroundColor: '#1a1f2e',
+    borderColor: '#333d52',
+    borderWidth: 1,
+    padding: 10,
+    cornerRadius: 6,
+  };
+
+  /* ── 4a. BAR AGRUPADO — PRECISIÓN ── */
+  new Chart(document.getElementById('chartPrecision'), {
+    type: 'bar',
+    data: {
+      labels: {{ bar_precision_labels | safe }},
+      datasets: [
+        { label:'Bajo',  data: {{ bar_precision_bajo  | safe }}, backgroundColor: C_BAJO,  borderRadius:2 },
+        { label:'Medio', data: {{ bar_precision_medio | safe }}, backgroundColor: C_MEDIO, borderRadius:2 },
+        { label:'Alto',  data: {{ bar_precision_alto  | safe }}, backgroundColor: C_ALTO,  borderRadius:2 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'bottom', labels:{ usePointStyle:true, pointStyle:'rect', boxWidth:10, padding:16, color:TICK } },
+        tooltip: { ...TIP, callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } }
+      },
+      scales: {
+        x: { grid:{display:false}, ticks:{color:TICK, font:{size:11}} },
+        y: { beginAtZero:true, max:100, grid:{color:GRID}, ticks:{color:TICK, font:{size:11}, callback:v=>v+'%'} }
+      }
+    }
+  });
+
+  /* ── 4b. BAR HORIZONTAL — VERACIDAD ── */
+  const verLabels = {{ bar_ver_labels | safe }};
+  const verValues = {{ bar_ver_values | safe }};
+
+  new Chart(document.getElementById('chartVeracidad'), {
+    type: 'bar',
+    data: {
+      labels: verLabels,
+      datasets: [{
+        label: 'Veracidad',
+        data: verValues,
+        backgroundColor: verValues.map((v, i) => {
+          // Si el valor es 0, usar un color neutro translúcido
+          if (v === 0) return 'rgba(51, 61, 82, 0.4)';
+          return `hsl(${38 - i*2},${85-i*3}%,${48-i}%)`;
+        }),
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...TIP, callbacks:{ label: ctx => ` ${ctx.parsed.x} ★` } }
+      },
+      scales: {
+        x: { beginAtZero:true, min: 1, max:5, grid:{color:GRID}, ticks:{color:TICK, callback:v=>v+' ★'} },
+        y: { grid:{display:false}, ticks:{color:TICK, font:{size:11}} }
+      }
+    }
+  });
+
+  /* ── 5. SCATTER — CORRELACIÓN ── */
+  const scatterRaw = {{ scatter_data | safe }};
+  new Chart(document.getElementById('chartScatter'), {
+    type: 'scatter',
+    data: {
+      datasets: scatterRaw.map(p => ({
+        label: p.label,
+        data: [{ x: p.x, y: p.y }],
+        backgroundColor: p.backgroundColor,
+        pointRadius: p.pointRadius,
+        pointHoverRadius: p.pointHoverRadius,
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...TIP, callbacks:{ label: ctx => ` ${ctx.dataset.label}  Precisión: ${ctx.parsed.x}%  Veracidad: ${ctx.parsed.y} ★` } }
+      },
+      scales: {
+        x: {
+          title:{ display:true, text:'Precisión diagnóstica (%)', color:TICK, font:{size:12} },
+          min:0, max:100, grid:{color:GRID}, ticks:{color:TICK, callback:v=>v+'%'}
+        },
+        y: {
+          title:{ display:true, text:'Veracidad promedio (★)', color:TICK, font:{size:12} },
+          min:1, max:5, grid:{color:GRID}, ticks:{color:TICK, callback:v=>v+' ★'}
+        }
+      }
+    }
+  });
+
+});
+</script>
+{% endif %}
+{% endblock %}

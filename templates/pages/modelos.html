@@ -1,0 +1,127 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Modelos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Modelos de IA</h3>
+
+    {# Botón Nuevo #}
+    {% if not mostrar_formulario %}
+        <a href="{{ url_for('modelos.index', accion='nuevo') }}"
+           class="btn btn-primary mb-3">
+            Nuevo Modelo
+        </a>
+    {% endif %}
+
+    {# Límite de registros #}
+    <form method="GET" action="{{ url_for('modelos.index') }}"
+          class="d-flex align-items-center mb-3">
+        <label class="form-label me-2 mb-0">Límite:</label>
+        <input class="form-control me-2" type="number" name="limite"
+               style="width:100px" value="{{ limite or '' }}" />
+        <button class="btn btn-outline-secondary" type="submit">Cargar</button>
+    </form>
+
+    {# Formulario #}
+    {% if mostrar_formulario %}
+        <div class="card mb-3">
+            <div class="card-header">
+                {{ "Editar Modelo" if editando else "Nuevo Modelo" }}
+            </div>
+            <div class="card-body">
+                <form method="POST"
+                      action="{{ url_for('modelos.actualizar') if editando
+                                 else url_for('modelos.crear') }}">
+                    {% if editando %}
+                        <input type="hidden" name="id" value="{{ registro.id }}" />
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input class="form-control" name="nombre" required
+                                   value="{{ registro.nombre if registro else '' }}" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Proveedor</label>
+                            <input class="form-control" name="proveedor"
+                                   value="{{ registro.proveedor if registro else '' }}" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Versión</label>
+                            <input class="form-control" name="version"
+                                   value="{{ registro.version if registro else '' }}" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox"
+                                       name="activo" id="activo" {% if registro and registro.activo %}checked{% endif %} />
+                                <label class="form-check-label" for="activo">
+                                    Activo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success me-2" type="submit">Guardar</button>
+                    <a href="{{ url_for('modelos.index') }}"
+                       class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    {# Tabla #}
+    {% if registros %}
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Proveedor</th>
+                    <th>Versión</th>
+                    <th>Activo</th>
+                        <th>Fecha de Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reg in registros %}
+                <tr>
+                    <td>{{ reg.id }}</td>
+                    <td>{{ reg.nombre }}</td>
+                    <td>{{ reg.proveedor or '-' }}</td>
+                    <td>{{ reg.version or '-' }}</td>
+                    <td>
+                        {% if reg.activo %}
+                            <span class="badge bg-success">Sí</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ reg.fecha_creacion[:10] if reg.fecha_creacion else '-' }}</td>
+                    <td>
+                        <a href="{{ url_for('modelos.index',
+                                    accion='editar', clave=reg.id) }}"
+                           class="btn btn-warning btn-sm me-1">Editar</a>
+
+                        <form method="POST"
+                              action="{{ url_for('modelos.eliminar') }}"
+                              style="display:inline"
+                              onsubmit="return confirm('¿Eliminar este modelo?')">
+                            <input type="hidden" name="id" value="{{ reg.id }}" />
+                            <button class="btn btn-danger btn-sm"
+                                    type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning">
+            No se encontraron registros en la tabla modelos.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

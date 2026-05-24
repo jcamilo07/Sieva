@@ -1,0 +1,148 @@
+{% extends 'layout/base_login.html' %}
+{% block content %}
+<div class="row w-100 shadow-lg rounded-4 overflow-hidden" style="max-width: 900px; background: rgba(255, 255, 255, 0.98); border: 1px solid rgba(0, 0, 0, 0.05);">
+    
+    <!-- Lado Izquierdo: Branding corporativo -->
+    <div class="col-lg-5 d-none d-lg-flex flex-column p-5 text-white position-relative" style="background: #0f172a; overflow: hidden;">
+        <!-- Elemento de fondo corporativo -->
+        <div style="position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(37,99,235,0.3) 0%, transparent 60%); border-radius: 50%;"></div>
+        
+        <div class="position-relative z-index-1 mt-4">
+            <div class="d-flex align-items-center mb-5">
+                <i class="bi bi-shield-plus fs-2 me-3 text-info"></i>
+                <h3 class="fw-bold mb-0" style="letter-spacing: -0.5px;">SIEVA</h3>
+            </div>
+            
+            <h1 class="fw-bold mb-4" style="font-size: 2.2rem; line-height: 1.2;">Actualización de<br>Seguridad</h1>
+            <p class="fs-6 fw-light mb-5" style="color: #94a3b8;">
+                Por razones de seguridad, debes actualizar tu contraseña temporal antes de continuar utilizando el sistema.
+            </p>
+        </div>
+
+        <div class="mt-auto position-relative z-index-1">
+            <div class="d-flex align-items-center" style="color: #64748b; font-size: 0.85rem;">
+                <i class="bi bi-shield-check me-2"></i> Acceso restringido hasta actualización
+            </div>
+        </div>
+    </div>
+
+    <!-- Lado Derecho: Formulario Profesional -->
+    <div class="col-lg-7 col-12 p-5 bg-white d-flex flex-column justify-content-center">
+        <div class="mb-4">
+            <h4 class="fw-bold text-dark mb-2">Cambiar Contraseña</h4>
+            <p class="text-muted" style="font-size: 0.95rem;">Elige una nueva contraseña segura.</p>
+        </div>
+
+        <form method="POST" action="/cambiar-contrasena" id="formCambiarContrasena">
+            
+            <div class="alert alert-info py-2" style="font-size: 0.85rem;">
+                <i class="bi bi-info-circle-fill me-1"></i> Requisitos: Mínimo 6 caracteres, 1 mayúscula, 1 número.
+            </div>
+
+            <!-- Campo de nueva contraseña -->
+            <div class="mb-3">
+                <label for="floatingPassword" class="form-label fw-semibold text-dark" style="font-size: 0.9rem;">Nueva Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted">
+                        <i class="bi bi-key"></i>
+                    </span>
+                    <input type="password" name="nueva_contrasena" class="form-control bg-light border-x-0 px-0" style="border-left: none; border-right: none; box-shadow: none;" id="floatingPassword" placeholder="••••••••" required>
+                    <button class="btn bg-light border border-start-0 text-muted" type="button" id="togglePassword">
+                        <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Campo de confirmar contraseña -->
+            <div class="mb-4">
+                <label for="floatingConfirm" class="form-label fw-semibold text-dark" style="font-size: 0.9rem;">Confirmar Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted">
+                        <i class="bi bi-key-fill"></i>
+                    </span>
+                    <input type="password" name="confirmar_contrasena" class="form-control bg-light border-x-0 px-0" style="border-left: none; border-right: none; box-shadow: none;" id="floatingConfirm" placeholder="••••••••" required>
+                    <button class="btn bg-light border border-start-0 text-muted" type="button" id="toggleConfirm">
+                        <i class="bi bi-eye-slash" id="toggleConfirmIcon"></i>
+                    </button>
+                </div>
+                <div id="passwordError" class="text-danger mt-1" style="font-size: 0.8rem; display: none;"></div>
+            </div>
+
+            <!-- Botón de actualización -->
+            <button type="submit" class="btn btn-primary w-100 py-2 rounded-3 fw-semibold shadow-sm" style="background-color: #2563eb; border: none; font-size: 1rem;">
+                Actualizar Contraseña <i class="bi bi-check-circle ms-2"></i>
+            </button>
+        </form>
+        
+        <div class="text-center mt-5">
+            <small class="text-muted" style="font-size: 0.8rem;">SIEVA &copy; 2026 &middot; Proyecto de Grado</small>
+        </div>
+    </div>
+
+</div>
+
+<!-- Script para validación y ojito de contraseña -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('floatingPassword');
+    const icon = document.getElementById('toggleIcon');
+
+    const toggleConfirm = document.getElementById('toggleConfirm');
+    const confirm = document.getElementById('floatingConfirm');
+    const confirmIcon = document.getElementById('toggleConfirmIcon');
+    
+    const form = document.getElementById('formCambiarContrasena');
+    const errorDiv = document.getElementById('passwordError');
+
+    // Función para ojito
+    function setupToggle(btn, input, icn) {
+        btn.addEventListener('click', function () {
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            
+            if (type === 'password') {
+                icn.classList.remove('bi-eye');
+                icn.classList.add('bi-eye-slash');
+                icn.classList.replace('text-primary', 'text-muted');
+            } else {
+                icn.classList.remove('bi-eye-slash');
+                icn.classList.add('bi-eye');
+                icn.classList.replace('text-muted', 'text-primary');
+            }
+        });
+    }
+
+    setupToggle(togglePassword, password, icon);
+    setupToggle(toggleConfirm, confirm, confirmIcon);
+
+    // Validación del formulario
+    form.addEventListener('submit', function(e) {
+        const val = password.value;
+        const confirmVal = confirm.value;
+        let errors = [];
+
+        if (val !== confirmVal) {
+            errors.push("Las contraseñas no coinciden.");
+        }
+        if (val.length < 6) {
+            errors.push("Mínimo 6 caracteres.");
+        }
+        if (!/[A-Z]/.test(val)) {
+            errors.push("Debe incluir al menos una letra mayúscula.");
+        }
+        if (!/\d/.test(val)) {
+            errors.push("Debe incluir al menos un número.");
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault(); // Detener el envío
+            errorDiv.innerHTML = errors.join('<br>');
+            errorDiv.style.display = 'block';
+        } else {
+            errorDiv.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

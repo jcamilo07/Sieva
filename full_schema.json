@@ -1,0 +1,52 @@
+{
+    "casos_clinicos": [
+        "id",
+        "titulo",
+        "descripcion",
+        "diagnostico_esperado",
+        "nivel_dificultad",
+        "fecha_creacion"
+    ],
+    "roles": [
+        "id",
+        "nombre",
+        "descripcion",
+        "fecha_creacion"
+    ],
+    "criterios_evaluacion": [
+        "id",
+        "nombre",
+        "descripcion",
+        "fecha_creacion"
+    ],
+    "especialidades": [
+        "id",
+        "nombre",
+        "descripcion",
+        "fecha_creacion"
+    ],
+    "modelos": [
+        "id",
+        "nombre",
+        "proveedor",
+        "version",
+        "activo",
+        "fecha_creacion"
+    ],
+    "registros_api": [
+        "id",
+        "endpoint",
+        "cuerpo_peticion",
+        "codigo_respuesta",
+        "mensaje_error",
+        "fecha_creacion"
+    ],
+    "usuarios": [
+        "id",
+        "nombre",
+        "email",
+        "password_hash",
+        "activo",
+        "fecha_creacion"
+    ]
+}

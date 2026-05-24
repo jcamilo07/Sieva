@@ -1,0 +1,800 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+Casos Clínicos
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h3>Casos Clínicos</h3>
+
+    <!-- BOTÓN NUEVO -->
+    {% if not mostrar_formulario %}
+        <a href="{{ url_for('casos_clinicos.index', accion='nuevo') }}"
+           class="btn btn-primary mb-3">
+            Nuevo Caso Clínico
+        </a>
+    {% endif %}
+
+    <!-- FILTRO -->
+    <form method="GET"
+          action="{{ url_for('casos_clinicos.index') }}"
+          class="d-flex align-items-center mb-3">
+
+        <label class="form-label me-2 mb-0">Límite:</label>
+
+        <input type="number"
+               name="limite"
+               class="form-control me-2"
+               style="width:100px"
+               value="{{ limite or '' }}">
+
+        <button type="submit" class="btn btn-outline-secondary">
+            Cargar
+        </button>
+    </form>
+
+    <!-- FORMULARIO NUEVO/EDITAR -->
+    {% if mostrar_formulario %}
+    <div class="card mb-3">
+
+        <div class="card-header">
+            {{ "Editar Caso Clínico" if editando else "Nuevo Caso Clínico" }}
+        </div>
+
+        <div class="card-body">
+            <form method="POST"
+                  action="{{ url_for('casos_clinicos.actualizar') if editando else url_for('casos_clinicos.crear') }}">
+
+                {% if editando %}
+                    <input type="hidden" name="id" value="{{ registro.id }}">
+                {% endif %}
+
+                <div class="row">
+
+                    <!-- ID CASO -->
+                    <div class="col-6 mb-3">
+                        <label class="form-label">ID Caso</label>
+                        <input type="number"
+                               name="id_caso"
+                               class="form-control"
+                               value="{{ registro.id_caso if registro else '' }}"
+                               required>
+                    </div>
+
+                    <!-- MODELO -->
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Modelo</label>
+                        <select name="modelo_id" class="form-control" required>
+                            <option value="">Seleccione un modelo...</option>
+                            {% for m in modelos %}
+                            <option value="{{ m.id }}"
+                                {% if registro and registro.modelo_id == m.id %}selected{% endif %}>
+                                {{ m.nombre }} (v{{ m.version }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- HISTORIA -->
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Historia</label>
+                        <textarea name="historia" class="form-control" rows="4"
+                                  required>{{ registro.historia if registro else '' }}</textarea>
+                    </div>
+
+                    <!-- DIAGNÓSTICO IA -->
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Diagnóstico IA</label>
+                        <textarea name="diagnostico_ia" class="form-control"
+                                  rows="3">{{ registro.diagnostico_ia if registro else '' }}</textarea>
+                    </div>
+
+                    <!-- DIAGNÓSTICO HUMANO -->
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Diagnóstico Humano</label>
+                        <textarea name="diagnostico_humano" class="form-control"
+                                  rows="3">{{ registro.diagnostico_humano if registro else '' }}</textarea>
+                    </div>
+
+                    <!-- DIFICULTAD -->
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Nivel de Dificultad</label>
+                        <select name="nivel_dificultad" class="form-control" required>
+                            {% if not registro %}
+                                <option value="">Seleccione...</option>
+                            {% endif %}
+                            <option value="bajo" style="background-color: #d1e7dd; color: #0f5132;"
+                                {% if registro and registro.nivel_dificultad|lower == 'bajo' %}selected{% endif %}>
+                                Bajo
+                            </option>
+                            <option value="medio" style="background-color: #fff3cd; color: #664d03;"
+                                {% if registro and registro.nivel_dificultad|lower == 'medio' %}selected{% endif %}>
+                                Medio
+                            </option>
+                            <option value="alto" style="background-color: #f8d7da; color: #842029;"
+                                {% if registro and registro.nivel_dificultad|lower == 'alto' %}selected{% endif %}>
+                                Alto
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- FECHA -->
+                    <div class="col-6 mb-3">
+                        <label class="form-label">Fecha de Creación</label>
+                        <input type="datetime-local"
+                               name="fecha_creacion"
+                               class="form-control"
+                               value="{{ registro.fecha_creacion[:16] if registro and registro.fecha_creacion else '' }}"
+                               required>
+                    </div>
+
+                    <!-- ESPECIALIDADES EN FORMULARIO -->
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Especialidades</label>
+                        {% for esp in especialidades %}
+                        <div class="form-check esp-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="especialidades"
+                                   value="{{ esp.id }}"
+                                   id="esp{{ esp.id }}"
+                                   {% if registro and esp.nombre in registro.especialidades %}checked{% endif %}>
+                            <label class="form-check-label" for="esp{{ esp.id }}">
+                                {{ esp.nombre }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                        <div class="form-text">Puedes dejar el campo de especialidades vacío si el caso clínico no tiene especialidad asignada.</div>
+                    </div>
+
+                <!-- BOTONES -->
+                <button type="submit" class="btn btn-success me-2">Guardar</button>
+                <a href="{{ url_for('casos_clinicos.index') }}" class="btn btn-secondary">Cancelar</a>
+
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- TABLA -->
+        <div class="mb-2">
+            <button id="exportCsvBtn" class="btn btn-outline-primary btn-sm">Exportar CSV</button>
+        </div>
+    {% if registros %}
+    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+
+        <table class="table table-striped table-hover"
+               style="min-width:1200px; white-space:normal;">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Caso</th>
+                    <th>Modelo</th>
+                    <th>Especialidades</th>
+                    <th>Historia</th>
+                    <th>Diagnóstico IA</th>
+                    <th>Diagnóstico Humano</th>
+                    <th>N.Dificultad</th>
+                    <th>F. Creación</th>
+                    <th>Observación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for reg in registros %}
+                <tr>
+
+                    <td>{{ reg.id }}</td>
+                    <td>{{ reg.id_caso }}.{{ reg.iteracion }}</td>
+                    <td>{{ reg.modelo_nombre or '-' }}</td>
+
+                    <!-- ESPECIALIDADES INLINE (chips compactos + panel expandible) -->
+                    <td style="min-width:200px;" class="esp-cell">
+                        <!-- Chips de especialidades activas -->
+                        <div class="esp-chips" id="chips_{{ reg.id }}">
+                            {% set active_count = namespace(n=0) %}
+                            {% for esp in especialidades %}
+                                {% if esp.nombre in reg.especialidades %}
+                                    {% set active_count.n = active_count.n + 1 %}
+                                    <span class="esp-chip esp-chip-active">{{ esp.nombre }}</span>
+                                {% endif %}
+                            {% endfor %}
+                            {% if active_count.n == 0 %}
+                                <span class="text-muted" style="font-size:0.8rem;">—</span>
+                            {% endif %}
+                        </div>
+                        <!-- Botón ver más / ocultar -->
+                        <button class="btn btn-link btn-sm p-0 mt-1 esp-toggle-btn"
+                                style="font-size:0.78rem; color:#0d6efd; text-decoration:none;"
+                                onclick="toggleEspPanel(event, {{ reg.id }})">
+                            Ver más ▾
+                        </button>
+                        <!-- Panel expandible con todas las especialidades en columnas -->
+                        <div class="esp-panel d-none" id="espPanel_{{ reg.id }}">
+                            <div class="esp-grid">
+                                {% for esp in especialidades %}
+                                <label class="esp-grid-item {% if esp.nombre in reg.especialidades %}esp-grid-active{% endif %}"
+                                       id="esplabel_{{ reg.id }}_{{ esp.id }}">
+                                    <input type="checkbox"
+                                           class="esp-checkbox"
+                                           id="esp_{{ reg.id }}_{{ esp.id }}"
+                                           data-caso-id="{{ reg.id }}"
+                                           data-esp-id="{{ esp.id }}"
+                                           data-label-id="esplabel_{{ reg.id }}_{{ esp.id }}"
+                                           {% if esp.nombre in reg.especialidades %}checked{% endif %}>
+                                    <span class="esp-text">{{ esp.nombre }}</span>
+                                    <span class="esp-spinner" id="spinner_{{ reg.id }}_{{ esp.id }}"></span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- HISTORIA -->
+                    <td>
+                        {% if reg.historia %}
+                            {{ reg.historia[:60] }}...
+                            <br>
+                            <button class="btn btn-link btn-sm p-0"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalHistoria{{ reg.id }}">
+                                Leer más
+                            </button>
+                            <div class="modal fade" id="modalHistoria{{ reg.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Historia Clínica</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">{{ reg.historia }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if reg.diagnostico_ia %}
+                            {{ reg.diagnostico_ia[:60] }}...
+                            <br>
+                            <button class="btn btn-link btn-sm p-0"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDiagnosticoIA{{ reg.id }}">
+                                Leer más
+                            </button>
+                            <div class="modal fade" id="modalDiagnosticoIA{{ reg.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Diagnóstico IA</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">{{ reg.diagnostico_ia }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if reg.diagnostico_humano %}
+                            {{ reg.diagnostico_humano[:60] }}...
+                            <br>
+                            <button class="btn btn-link btn-sm p-0"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDiagnosticoHumano{{ reg.id }}">
+                                Leer más
+                            </button>
+                            <div class="modal fade" id="modalDiagnosticoHumano{{ reg.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Diagnóstico Humano</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">{{ reg.diagnostico_humano }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <!-- BADGE DIFICULTAD -->
+                    <td>
+                        {% set diff = reg.nivel_dificultad|string|lower %}
+                        {% if diff == 'bajo' or diff == '1' %}
+                        <span class="badge px-3 py-2 fw-bold" style="background: #bbf7d0 !important; color: #166534 !important; border: 1px solid #86efac;">BAJO</span>
+                        {% elif diff == 'medio' or diff == '2' %}
+                        <span class="badge px-3 py-2 fw-bold" style="background: #fef08a !important; color: #854d0e !important; border: 1px solid #fde047;">MEDIO</span>
+                        {% elif diff == 'alto' or diff == '3' %}
+                        <span class="badge px-3 py-2 fw-bold" style="background: #fecaca !important; color: #991b1b !important; border: 1px solid #f87171;">ALTO</span>
+                        {% else %}
+                        <span class="badge px-3 py-2" style="background: #e5e7eb !important; color: #374151 !important;">{{ reg.nivel_dificultad }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ reg.fecha_creacion.replace('T',' ')[:16] if reg.fecha_creacion else '-' }}
+                    </td>
+
+                    <!-- OBSERVACIÓN: CALIFICACIÓN Y JUSTIFICACIÓN -->
+                    <td style="min-width: 180px;">
+                        <div class="obs-container">
+                            <div class="star-rating" data-id="{{ reg.id }}">
+                                {% for i in range(1,6) %}
+                                    <span class="star {% if reg.calificacion_ia and reg.calificacion_ia >= i %}selected{% endif %} 
+                                                 {% if reg.calificacion_ia %}
+                                                    {% if reg.calificacion_ia <= 2 %}low
+                                                    {% elif reg.calificacion_ia == 3 %}medium
+                                                    {% else %}high
+                                                    {% endif %}
+                                                 {% endif %}"
+                                          data-value="{{ i }}"
+                                          onclick="setRating(this, {{ reg.id }})">&#9733;</span>
+                                {% endfor %}
+                            </div>
+                            <div class="obs-label mt-2">Observación:</div>
+                            <textarea class="form-control obs-textarea" rows="2" placeholder="Observación..." data-id="{{ reg.id }}">{{ reg.observacion or '' }}</textarea>
+                        </div>
+                    </td>
+                    <!-- ACCIONES -->
+                    <td>
+                        <a href="{{ url_for('casos_clinicos.index', accion='editar', clave=reg.id) }}"
+                           class="btn btn-warning btn-sm me-1">
+                            Editar
+                        </a>
+                        <form method="POST"
+                              action="{{ url_for('casos_clinicos.eliminar') }}"
+                              style="display:inline"
+                              onsubmit="return confirm('¿Eliminar este caso clínico?')">
+                            <input type="hidden" name="id" value="{{ reg.id }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+    <!-- PAGINADOR -->
+    {% if total_paginas > 1 %}
+    <nav aria-label="Paginación de casos clínicos">
+        <ul class="pagination justify-content-center mt-3">
+            <!-- Primera y Anterior -->
+            {% if page > 1 %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('casos_clinicos.index', page=1, per_page=per_page, limite=limite) }}">Primera</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('casos_clinicos.index', page=page-1, per_page=per_page, limite=limite) }}">Anterior</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Primera</span></li>
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+            {% endif %}
+            
+            <!-- Números de página -->
+            {% for p in range(1, total_paginas + 1) %}
+                {% if p >= page - 2 and p <= page + 2 %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('casos_clinicos.index', page=p, per_page=per_page, limite=limite) }}">{{ p }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            <!-- Siguiente y Última -->
+            {% if page < total_paginas %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('casos_clinicos.index', page=page+1, per_page=per_page, limite=limite) }}">Siguiente</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('casos_clinicos.index', page=total_paginas, per_page=per_page, limite=limite) }}">Última</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+            <li class="page-item disabled"><span class="page-link">Última</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    <div class="text-center mt-2">
+        <small class="text-muted">Mostrando {{ (page-1)*per_page + 1 }}-{{ [page*per_page, total_registros]|min }} de {{ total_registros }} registros</small>
+    </div>
+    {% endif %}
+
+    {% else %}
+        <div class="alert alert-warning">
+            No se encontraron registros en la tabla casos_clinicos.
+        </div>
+    {% endif %}
+
+</div>
+
+<style>
+/* ── Chips activos (vista resumida) ── */
+.esp-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+.esp-chip {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: #e9f5ee;
+    color: #1a6b3a;
+    border: 1px solid #a3d9b5;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ── Panel expandible ── */
+.esp-panel {
+    margin-top: 6px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: #f8f9fa;
+    position: relative;
+    z-index: 10;
+    min-width: 320px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+/* Grid de especialidades en columnas */
+.esp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+    gap: 8px;
+    padding: 8px 0;
+}
+
+/* Cada celda del grid (actúa como chip toggleable) */
+.esp-grid-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1.5px solid #dee2e6;
+    background: #fff;
+    color: #495057;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    word-wrap: break-word;
+    white-space: normal;
+    line-height: 1.3;
+    min-height: 30px;
+}
+.esp-grid-item:hover {
+    border-color: #adb5bd;
+    background: #f1f3f5;
+}
+.esp-grid-item.esp-grid-active {
+    background: #d1fae5;
+    border-color: #34d399;
+    color: #065f46;
+    font-weight: 600;
+}
+.esp-grid-item.esp-grid-active:hover {
+    background: #a7f3d0;
+    border-color: #10b981;
+}
+
+.esp-grid-item.esp-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.esp-text {
+    flex: 1;
+    word-break: break-word;
+}
+
+/* Spinner pequeño que aparece mientras guarda */
+.esp-spinner {
+    display: none;
+    width: 0.75rem;
+    height: 0.75rem;
+    border: 2px solid #ccc;
+    border-top-color: #198754;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 3px;
+    flex-shrink: 0;
+}
+.esp-spinner.active { display: inline-block; }
+
+.esp-checkbox {
+    flex-shrink: 0;
+    cursor: pointer;
+    margin-top: 2px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<style>
+.star-rating .star {
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s;
+}
+.star-rating .star.selected {
+    color: #ffc107;
+}
+.star-rating .star.selected.low {
+    color: #dc3545;
+}
+.star-rating .star.selected.medium {
+    color: #ffc107;
+}
+.star-rating .star.selected.high {
+    color: #198754;
+}
+.obs-textarea {
+    font-size: 0.85em;
+    resize: vertical;
+    width: 100%;
+}
+.obs-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.obs-label {
+    font-size: 0.75em;
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+</style>
+
+<script>
+document.getElementById('exportCsvBtn').addEventListener('click', function() {
+    window.location.href = "{{ url_for('casos_clinicos.exportar_csv') }}";
+});
+
+function setRating(starElem, regId) {
+    let value = parseInt(starElem.getAttribute('data-value'));
+    const stars = starElem.parentElement.querySelectorAll('.star');
+    
+    // Si la estrella clickeada ya es el valor actual (está seleccionada y la siguiente no)
+    // Entonces deseleccionamos el valor
+    let isCurrentValue = false;
+    if (starElem.classList.contains('selected')) {
+        let nextStar = starElem.nextElementSibling;
+        if (!nextStar || !nextStar.classList.contains('selected')) {
+            isCurrentValue = true;
+        }
+    }
+
+    if (isCurrentValue) {
+        value = 0;
+    }
+
+    stars.forEach((star, idx) => {
+        star.classList.remove('selected', 'low', 'medium', 'high');
+        if (idx < value) {
+            star.classList.add('selected');
+        }
+    });
+
+    // Añadir clase de color según el valor final a todas las estrellas seleccionadas
+    if (value > 0) {
+        let colorClass = 'high';
+        if (value <= 2) colorClass = 'low';
+        else if (value === 3) colorClass = 'medium';
+        
+        stars.forEach((star, idx) => {
+            if (idx < value) {
+                star.classList.add(colorClass);
+            }
+        });
+    }
+
+    const finalVal = value === 0 ? null : value;
+    
+    // Obtener la observación actual del textarea
+    const container = starElem.closest('.obs-container');
+    const textarea = container.querySelector('.obs-textarea');
+    const currentObs = textarea ? textarea.value : undefined;
+
+    // Guardar calificación en la BD incluyendo la observación actual
+    guardarCalificacion(regId, finalVal, currentObs);
+}
+
+function guardarCalificacion(casoId, calificacion, observacion) {
+    const payload = { caso_id: casoId };
+    if (calificacion !== undefined) payload.calificacion = calificacion;
+    if (observacion !== undefined) payload.observacion = observacion;
+
+    // Feedback visual (opcional: podrías añadir un spinner o cambio de borde)
+    const textarea = document.querySelector(`.obs-textarea[data-id="${casoId}"]`);
+    if (textarea) textarea.style.borderColor = "#ffc107"; // Amarillo: Procesando
+
+    fetch('/casos_clinicos/calificacion/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ok) {
+            if (textarea) {
+                textarea.style.borderColor = "#198754"; // Verde: Éxito
+                setTimeout(() => textarea.style.borderColor = "", 1500);
+            }
+        } else {
+            console.error('Error guardando:', data.error);
+            if (textarea) textarea.style.borderColor = "#dc3545"; // Rojo: Error
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        if (textarea) textarea.style.borderColor = "#dc3545";
+    });
+}
+
+// Guardar observación cuando el usuario termine de escribir
+document.querySelectorAll('.obs-textarea').forEach(textarea => {
+    textarea.addEventListener('blur', function() {
+        const casoId = this.dataset.id;
+        const observacion = this.value;
+        const ratingDiv = this.closest('.obs-container').querySelector('.star-rating');
+        let calificacion = undefined;
+        const selectedStar = ratingDiv ? ratingDiv.querySelector('.star.selected:last-of-type') : null;
+        if (selectedStar) {
+            calificacion = parseInt(selectedStar.getAttribute('data-value'));
+        }
+        guardarCalificacion(casoId, calificacion, observacion);
+    });
+});
+</script>
+
+<script>
+/* ── Toggle panel de especialidades ── */
+function toggleEspPanel(evt, regId) {
+    evt.stopPropagation();
+    const panel = document.getElementById('espPanel_' + regId);
+    const btn   = panel.previousElementSibling;
+    const isHidden = panel.classList.contains('d-none');
+    // Cerrar todos los paneles abiertos primero
+    document.querySelectorAll('.esp-panel').forEach(p => {
+        p.classList.add('d-none');
+        const b = p.previousElementSibling;
+        if (b) b.textContent = 'Ver más ▾';
+    });
+    if (isHidden) {
+        panel.classList.remove('d-none');
+        btn.textContent = 'Ocultar ▴';
+    }
+}
+
+/* ── Configurar event listeners para checkboxes de especialidades ── */
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.esp-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            handleEspChange(this);
+        });
+    });
+});
+
+function handleEspChange(checkbox) {
+    const casoId = parseInt(checkbox.dataset.casoId);
+    const espId = parseInt(checkbox.dataset.espId);
+    const labelId = checkbox.dataset.labelId;
+    const labelElem = document.getElementById(labelId);
+    const spinner = document.getElementById('spinner_' + casoId + '_' + espId);
+    
+    if (!labelElem || !spinner) return;
+    if (labelElem.classList.contains('esp-disabled')) return;
+
+    const marcado = checkbox.checked;
+
+    // UI feedback inmediato
+    labelElem.classList.toggle('esp-grid-active', marcado);
+    labelElem.classList.add('esp-disabled');
+    spinner.classList.add('active');
+
+    // Actualizar chips en la vista compacta
+    updateChips(casoId);
+
+    const url = marcado
+        ? '/casos_clinicos/especialidad/agregar'
+        : '/casos_clinicos/especialidad/quitar';
+
+    fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ caso_id: casoId, esp_id: espId })
+    })
+    .then(r => r.json())
+    .then(data => {
+        spinner.classList.remove('active');
+        labelElem.classList.remove('esp-disabled');
+        if (!data.ok) {
+            // Revertir cambio
+            checkbox.checked = !marcado;
+            labelElem.classList.toggle('esp-grid-active', !marcado);
+            updateChips(casoId);
+            alert('Error al guardar: ' + (data.error || 'intente de nuevo'));
+        }
+    })
+    .catch(err => {
+        spinner.classList.remove('active');
+        labelElem.classList.remove('esp-disabled');
+        checkbox.checked = !marcado;
+        labelElem.classList.toggle('esp-grid-active', !marcado);
+        updateChips(casoId);
+        console.error('Error:', err);
+        alert('Error de conexión al guardar especialidad.');
+    });
+}
+
+/* Regenera los chips visibles según checkboxes marcados */
+function updateChips(casoId) {
+    const panel     = document.getElementById('espPanel_' + casoId);
+    const chipsDiv  = document.getElementById('chips_' + casoId);
+    const checked   = panel.querySelectorAll('input.esp-checkbox:checked');
+    chipsDiv.innerHTML = '';
+    if (checked.length === 0) {
+        chipsDiv.innerHTML = '<span class="text-muted" style="font-size:0.8rem;">—</span>';
+    } else {
+        checked.forEach(cb => {
+            const label = cb.parentElement;
+            const textSpan = label.querySelector('.esp-text');
+            const name = textSpan ? textSpan.textContent.trim() : 'Especialidad';
+            const chip = document.createElement('span');
+            chip.className = 'esp-chip esp-chip-active';
+            chip.textContent = name;
+            chipsDiv.appendChild(chip);
+        });
+    }
+}
+
+/* Cerrar panel al hacer clic fuera */
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.esp-cell') && !e.target.closest('.esp-toggle-btn')) {
+        document.querySelectorAll('.esp-panel').forEach(p => {
+            p.classList.add('d-none');
+            const b = p.previousElementSibling;
+            if (b && b.classList.contains('esp-toggle-btn')) b.textContent = 'Ver más ▾';
+        });
+    }
+});
+
+function toggleReadMore(prefix, id) {
+    const shortEl = document.getElementById(prefix + '-short-' + id);
+    const fullEl  = document.getElementById(prefix + '-full-' + id);
+    const linkEl  = document.getElementById(prefix + '-link-' + id);
+    if (!shortEl || !fullEl || !linkEl) return;
+    if (fullEl.classList.contains('d-none')) {
+        shortEl.classList.add('d-none');
+        fullEl.classList.remove('d-none');
+        linkEl.textContent = 'Leer menos';
+    } else {
+        shortEl.classList.remove('d-none');
+        fullEl.classList.add('d-none');
+        linkEl.textContent = 'Leer más';
+    }
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+TODAS LAS TABLAS: ['casos_clinicos', 'sqlite_sequence', 'roles', 'criterios_evaluacion', 'especialidades', 'modelos', 'registros_api', 'usuarios', 'local_casos_clinicos']
+
+TABLA [casos_clinicos] - 1 registros
+  Columnas: ['id', 'titulo', 'descripcion', 'diagnostico_esperado', 'nivel_dificultad', 'fecha_creacion', 'calificacion_ia', 'observation_fix', 'historia', 'diagnostico_ia', 'diagnostico_humano', 'modelo_id', 'id_caso']
+  ROW: {'id': 1, 'titulo': 'Caso inicial', 'descripcion': 'Descripci¾n del caso clÝnico de ejemplo.', 'diagnostico_esperado': 'N/A', 'nivel_dificultad': 1, 'fecha_creacion': '2026-03-05 02:32:21', 'calificacion_ia': None, 'observation_fix': None, 'historia': None, 'diagnostico_ia': None, 'diagnostico_humano': None, 'modelo_id': None, 'id_caso': None}
+
+TABLA [sqlite_sequence] - 7 registros
+  Columnas: ['name', 'seq']
+
+TABLA [roles] - 2 registros
+  Columnas: ['id', 'nombre', 'descripcion', 'fecha_creacion']
+  ROW: {'id': 2, 'nombre': 'Admin', 'descripcion': 'Rol de administrador', 'fecha_creacion': '2026-03-05 02:32:21'}
+  ROW: {'id': 3, 'nombre': 'TestRole', 'descripcion': 'Desc', 'fecha_creacion': '2026-03-05 02:35:04'}
+
+TABLA [criterios_evaluacion] - 1 registros
+  Columnas: ['id', 'nombre', 'descripcion', 'fecha_creacion']
+  ROW: {'id': 1, 'nombre': 'Criterio 1', 'descripcion': 'Descripci¾n', 'fecha_creacion': '2026-03-05 02:32:21'}
+
+TABLA [especialidades] - 1 registros
+  Columnas: ['id', 'nombre', 'descripcion', 'fecha_creacion']
+  ROW: {'id': 1, 'nombre': 'General', 'descripcion': 'Especialidad general', 'fecha_creacion': '2026-03-05 02:32:21'}
+
+TABLA [modelos] - 2 registros
+  Columnas: ['id', 'nombre', 'proveedor', 'version', 'activo', 'fecha_creacion']
+  ROW: {'id': 8, 'nombre': 'Chat gpt', 'proveedor': 'open ai', 'version': '4', 'activo': 0, 'fecha_creacion': '2026-03-05 03:02:45'}
+  ROW: {'id': 9, 'nombre': 'JUAN CAMILO BLANQUICETH DIAZ', 'proveedor': 'deep', 'version': '4', 'activo': 1, 'fecha_creacion': '2026-03-05 03:07:15'}
+
+TABLA [registros_api] - 1 registros
+  Columnas: ['id', 'endpoint', 'cuerpo_peticion', 'codigo_respuesta', 'mensaje_error', 'fecha_creacion']
+  ROW: {'id': 1, 'endpoint': '/ejemplo', 'cuerpo_peticion': '{}', 'codigo_respuesta': 200, 'mensaje_error': '', 'fecha_creacion': '2026-03-05 02:32:21'}
+
+TABLA [usuarios] - 1 registros
+  Columnas: ['id', 'nombre', 'email', 'password_hash', 'activo', 'fecha_creacion']
+  ROW: {'id': 2, 'nombre': 'usuario', 'email': 'usuario@example.com', 'password_hash': '', 'activo': 1, 'fecha_creacion': '2026-03-05 02:34:22'}
+
+TABLA [local_casos_clinicos] - 1 registros
+  Columnas: ['id', 'calificacion_ia', 'observacion']
+  ROW: {'id': 1, 'calificacion_ia': None, 'observacion': ''}

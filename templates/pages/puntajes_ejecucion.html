@@ -1,0 +1,414 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Puntajes Ejecución{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="mb-4">
+        <h2 class="h3 text-primary">Evaluación de Ejecuciones</h2>
+        <p class="text-muted">Calificación de respuestas de modelos según criterios de evaluación</p>
+    </div>
+
+    {% if not mostrar_formulario %}
+        <a href="{{ url_for('puntajes_ejecucion.index', accion='nuevo') }}"
+           class="btn btn-primary mb-3">
+            <i class="bi bi-plus-circle"></i> Nueva Evaluación
+        </a>
+    {% endif %}
+
+    <form method="GET" action="{{ url_for('puntajes_ejecucion.index') }}"
+          class="d-flex align-items-center mb-3 gap-2">
+        <label class="form-label mb-0">Límite:</label>
+        <input class="form-control" type="number" name="limite"
+               style="width:100px" value="{{ limite or '' }}" />
+        <button class="btn btn-outline-secondary" type="submit">Cargar</button>
+    </form>
+
+    {% if mostrar_formulario %}
+        <div class="card mb-4 border-0 shadow-lg">
+            <div class="card-header bg-gradient">
+                <h5 class="mb-0">
+                    <i class="bi bi-pencil-square"></i> {{ "Editar Evaluación" if editando else "Nueva Evaluación" }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST"
+                      action="{{ url_for('puntajes_ejecucion.actualizar') if editando
+                                 else url_for('puntajes_ejecucion.crear') }}"
+                      id="formEvaluacion">
+                    {% if editando %}
+                        <input type="hidden" name="id" value="{{ registro.id }}" />
+                    {% endif %}
+                    
+                    <div class="row">
+                        <!-- Seleccionar Ejecución -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100 border-light">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="bi bi-play-circle"></i> Seleccionar Ejecución
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <label class="form-label fw-bold">Ejecución</label>
+                                    <select class="form-select mb-3" name="ejecucion_id" id="ejecucionSelect" required onchange="actualizarDatosEjecucion()">
+                                        <option value="">-- Seleccione una ejecución --</option>
+                                        {% for eje in ejecuciones %}
+                                        <option value="{{ eje.id }}"
+                                            data-caso-id="{{ eje.caso_id }}"
+                                            data-modelo-id="{{ eje.modelo_id }}"
+                                            data-respuesta="{{ eje.respuesta }}"
+                                            {% if editando and registro.ejecucion_id == eje.id %}selected{% endif %}>
+                                            ID: {{ eje.id }} - 
+                                            {% for m in modelos if m.id == eje.modelo_id %}{{ m.nombre }}{% endfor %}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seleccionar Criterio -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100 border-light">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="bi bi-clipboard-check"></i> Criterio de Evaluación
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <label class="form-label fw-bold">Criterio</label>
+                                    <select class="form-select mb-3" name="criterio_id" required>
+                                        <option value="">-- Seleccione un criterio --</option>
+                                        {% for crit in criterios %}
+                                        <option value="{{ crit.id }}"
+                                            {% if editando and registro.criterio_id == crit.id %}selected{% endif %}>
+                                            {{ crit.nombre }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del Caso Clínico -->
+                    <div class="row" id="casosInfo">
+                        <!-- Datos del Caso -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100 border-info">
+                                <div class="card-header bg-info bg-opacity-10">
+                                    <h6 class="mb-0 text-info">
+                                        <i class="bi bi-file-medical"></i> Información del Caso Clínico
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted">Diagnóstico Esperado</label>
+                                        <div class="p-3 bg-light rounded" id="diagnosricoInfo" style="min-height: 80px;">
+                                            <small class="text-muted">Seleccione una ejecución</small>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted">Descripción del Caso</label>
+                                        <div class="p-3 bg-light rounded" id="descripcionInfo" style="min-height: 100px; overflow-y: auto; max-height: 150px;">
+                                            <small class="text-muted">Seleccione una ejecución</small>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="form-label fw-bold text-muted">Nivel de Dificultad</label>
+                                        <div class="p-3 bg-light rounded" id="dificultadInfo">
+                                            <small class="text-muted">Seleccione una ejecución</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Respuesta de IA -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100 border-success">
+                                <div class="card-header bg-success bg-opacity-10">
+                                    <h6 class="mb-0 text-success">
+                                        <i class="bi bi-chat-dots"></i> Respuesta del Modelo
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <label class="form-label fw-bold text-muted">Respuesta IA</label>
+                                    <div class="p-3 bg-light rounded" id="respuestaInfo" style="min-height: 280px; overflow-y: auto; max-height: 300px;">
+                                        <small class="text-muted">Seleccione una ejecución</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calificación -->
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning bg-opacity-10">
+                                    <h6 class="mb-0 text-warning">
+                                        <i class="bi bi-star"></i> Calificación
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <label class="form-label fw-bold">Puntaje (1-5 estrellas)</label>
+                                    <div class="d-flex gap-2">
+                                        {% for i in range(1, 6) %}
+                                        <label class="form-check">
+                                            <input class="form-check-input" type="radio" name="puntaje" value="{{ i }}"
+                                                   {% if editando and registro.puntaje == i %}checked{% elif not editando and i == 3 %}checked{% endif %} />
+                                            <span class="stars" style="font-size: 2rem; color: #FFA726; cursor: pointer;"
+                                                  onclick="document.querySelector('input[name=puntaje][value={{ i }}]').checked=true">
+                                                {% for j in range(1, i+1) %}★{% endfor %}
+                                                {% for j in range(i+1, 6) %}☆{% endfor %}
+                                            </span>
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-success btn-lg me-2" type="submit">
+                                <i class="bi bi-check-circle"></i> Guardar Evaluación
+                            </button>
+                            <a href="{{ url_for('puntajes_ejecucion.index') }}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- TABLA DE EVALUACIONES -->
+    {% if registros %}
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-gradient">
+                <h5 class="mb-0">
+                    <i class="bi bi-table"></i> Evaluaciones Realizadas
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Caso Clínico</th>
+                                <th>Diagnóstico Esperado</th>
+                                <th>Descripción</th>
+                                <th>Nivel Dificultad</th>
+                                <th>Modelo</th>
+                                <th>Respuesta del Modelo</th>
+                                <th>Criterio</th>
+                                <th>Puntaje</th>
+                                <th>Fecha Evaluación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reg in registros %}
+                                {% set ejecucion = ejecuciones | selectattr('id', 'equalto', reg.ejecucion_id) | first %}
+                                {% set caso = casos | selectattr('id', 'equalto', ejecucion.caso_id) | first %}
+                                {% set criterio = criterios | selectattr('id', 'equalto', reg.criterio_id) | first %}
+                            <tr>
+                                <td><strong>{{ reg.id }}</strong></td>
+                                <td>{{ caso.titulo if caso.titulo else 'N/A' }}</td>
+                                <td>
+                                    {% if caso.diagnostico_esperado %}
+                                        {% if caso.diagnostico_esperado|length > 40 %}
+                                            <span id="diagnostico-short-{{ reg.id }}">{{ caso.diagnostico_esperado[:40] }}...</span>
+                                            <span id="diagnostico-full-{{ reg.id }}" class="d-none">{{ caso.diagnostico_esperado }}</span>
+                                            <br>
+                                            <a href="#" class="small" id="diagnostico-link-{{ reg.id }}" onclick="event.preventDefault(); toggleReadMore('diagnostico', {{ reg.id }});">Leer más</a>
+                                        {% else %}
+                                            {{ caso.diagnostico_esperado }}
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if caso.descripcion %}
+                                        {% if caso.descripcion|length > 40 %}
+                                            <span id="descripcion-short-{{ reg.id }}">{{ caso.descripcion[:40] }}...</span>
+                                            <span id="descripcion-full-{{ reg.id }}" class="d-none">{{ caso.descripcion }}</span>
+                                            <br>
+                                            <a href="#" class="small" id="descripcion-link-{{ reg.id }}" onclick="event.preventDefault(); toggleReadMore('descripcion', {{ reg.id }});">Leer más</a>
+                                        {% else %}
+                                            {{ caso.descripcion }}
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="text-warning">
+                                        {% for i in range(caso.nivel_dificultad) %}★{% endfor %}
+                                        {% for i in range(5 - caso.nivel_dificultad) %}☆{% endfor %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% set modelo = modelos | selectattr('id', 'equalto', ejecucion.modelo_id) | first %}
+                                    {{ modelo.nombre if modelo else 'N/A' }}
+                                </td>
+                                <td>
+                                    {% if ejecucion.respuesta %}
+                                        {% if ejecucion.respuesta|length > 40 %}
+                                            <span id="respuesta-short-{{ reg.id }}">{{ ejecucion.respuesta[:40] }}...</span>
+                                            <span id="respuesta-full-{{ reg.id }}" class="d-none">{{ ejecucion.respuesta }}</span>
+                                            <br>
+                                            <a href="#" class="small" id="respuesta-link-{{ reg.id }}" onclick="event.preventDefault(); toggleReadMore('respuesta', {{ reg.id }});">Leer más</a>
+                                        {% else %}
+                                            {{ ejecucion.respuesta }}
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ criterio.nombre if criterio else '-' }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if reg.puntaje >= 4 %}bg-success{% elif reg.puntaje >= 3 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {% for i in range(reg.puntaje) %}★{% endfor %}
+                                        {% for i in range(5 - reg.puntaje) %}☆{% endfor %}
+                                    </span>
+                                </td>
+                                <td><small>{{ reg.fecha_evaluacion[:16] if reg.fecha_evaluacion else '-' }}</small></td>
+                                <td>
+                                    <a href="{{ url_for('puntajes_ejecucion.index', accion='editar', clave=reg.id) }}"
+                                       class="btn btn-warning btn-sm me-1">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <form method="POST"
+                                          action="{{ url_for('puntajes_ejecucion.eliminar') }}"
+                                          style="display:inline"
+                                          onsubmit="return confirm('¿Eliminar esta evaluación?')">
+                                        <input type="hidden" name="id" value="{{ reg.id }}" />
+                                        <button class="btn btn-danger btn-sm" type="submit">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info border-0">
+            <i class="bi bi-info-circle"></i> No hay evaluaciones registradas aún.
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function actualizarDatosEjecucion() {
+    const select = document.getElementById('ejecucionSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    
+    if (selectedOption.value === '') {
+        document.getElementById('diagnosricoInfo').innerHTML = '<small class="text-muted">Seleccione una ejecución</small>';
+        document.getElementById('descripcionInfo').innerHTML = '<small class="text-muted">Seleccione una ejecución</small>';
+        document.getElementById('dificultadInfo').innerHTML = '<small class="text-muted">Seleccione una ejecución</small>';
+        document.getElementById('respuestaInfo').innerHTML = '<small class="text-muted">Seleccione una ejecución</small>';
+        return;
+    }
+
+    const casoId = selectedOption.getAttribute('data-caso-id');
+    const respuesta = selectedOption.getAttribute('data-respuesta');
+    
+    // Buscar datos del caso en el JSON de casos
+    const todosLoscasos = {{ casos | tojson }};
+    const caso = todosLoscasos.find(c => c.id == casoId);
+    
+    if (caso) {
+        document.getElementById('diagnosricoInfo').innerHTML = '<div>' + (caso.diagnostico_esperado || '-') + '</div>';
+        document.getElementById('descripcionInfo').innerHTML = '<div>' + (caso.descripcion || '-') + '</div>';
+        const estrellas = '★'.repeat(caso.nivel_dificultad) + '☆'.repeat(5 - caso.nivel_dificultad);
+        document.getElementById('dificultadInfo').innerHTML = '<span style="color: #FFA726; font-size: 1.2rem;">' + estrellas + '</span>';
+    }
+    
+    document.getElementById('respuestaInfo').innerHTML = '<div>' + (respuesta || '-') + '</div>';
+}
+
+function toggleReadMore(prefix, id) {
+    const shortEl = document.getElementById(prefix + '-short-' + id);
+    const fullEl = document.getElementById(prefix + '-full-' + id);
+    const linkEl = document.getElementById(prefix + '-link-' + id);
+    if (!shortEl || !fullEl || !linkEl) return;
+
+    if (fullEl.classList.contains('d-none')) {
+        shortEl.classList.add('d-none');
+        fullEl.classList.remove('d-none');
+        linkEl.textContent = 'Leer menos';
+    } else {
+        shortEl.classList.remove('d-none');
+        fullEl.classList.add('d-none');
+        linkEl.textContent = 'Leer más';
+    }
+}
+
+// Ejecutar al cargar para mostrar datos si hay editando
+document.addEventListener('DOMContentLoaded', function() {
+    const select = document.getElementById('ejecucionSelect');
+    if (select && select.value) {
+        actualizarDatosEjecucion();
+    }
+});
+</script>
+
+<style>
+.bg-gradient {
+    background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
+    color: white;
+}
+
+.bg-gradient h5 {
+    color: white;
+}
+
+.border-info {
+    border-left: 4px solid #1976D2 !important;
+}
+
+.border-success {
+    border-left: 4px solid #4CAF50 !important;
+}
+
+.border-warning {
+    border-left: 4px solid #FFA726 !important;
+}
+
+.form-check-input[type="radio"] {
+    cursor: pointer;
+}
+
+.form-check {
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.table-responsive {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.table th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+</style>
+{% endblock %}

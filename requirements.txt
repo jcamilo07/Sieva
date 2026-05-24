@@ -1,0 +1,10 @@
+# ══════════════════════════════════════════════
+# requirements.txt - Dependencias del proyecto
+# ══════════════════════════════════════════════
+# Instalar con: pip install -r requirements.txt
+
+Flask==3.1.0
+requests==2.32.3
+PyJWT==2.8.0
+python-dotenv==1.0.1
+bcrypt==4.1.2

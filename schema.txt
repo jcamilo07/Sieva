@@ -1,0 +1,13 @@
+id
+titulo
+descripcion
+diagnostico_esperado
+nivel_dificultad
+fecha_creacion
+calificacion_ia
+observation_fix
+historia
+diagnostico_ia
+diagnostico_humano
+modelo_id
+id_caso
