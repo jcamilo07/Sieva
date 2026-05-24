@@ -10,11 +10,11 @@ token = auth._get_admin_token()
 headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
 import os
-# 1. Crear el usuario jpablolujanborraez@gmail.com con clave (usar variable de entorno o input manual)
+# 1. Crear el usuario juancamiloblanquiceth10@gmail.com con clave (usar variable de entorno o input manual)
 password_admin = os.environ.get("ADMIN1_PASSWORD_PLAIN", "INGRESE_PASSWORD_AQUI")
 usuario = {
-    "nombre": "J Pablo Lujan Borraez",
-    "email": "jpablolujanborraez@gmail.com",
+    "nombre": "Juan Camilo Blanquiceth",
+    "email": "juancamiloblanquiceth10@gmail.com",
     "password_hash": password_admin,
     "activo": True
 }
@@ -30,7 +30,7 @@ except:
 # 2. Obtener el ID del usuario recién creado
 res_users = requests.get(f"{base_url}/api/usuarios", headers=headers)
 usuarios = res_users.json().get("datos", [])
-usuario_id = next((u["id"] for u in usuarios if u["email"] == "jpablolujanborraez@gmail.com"), None)
+usuario_id = next((u["id"] for u in usuarios if u["email"] == "juancamiloblanquiceth10@gmail.com"), None)
 
 if not usuario_id:
     print("No se pudo obtener el ID del usuario.")
