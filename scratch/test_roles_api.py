@@ -1,12 +1,13 @@
 import requests
 
 url_login = "http://localhost:5034/api/autenticacion/token"
+import os
 payload_login = {
     "tabla": "usuarios",
     "campoUsuario": "email",
     "campoContrasena": "password_hash",
     "usuario": "juancamiloblanquiceth10@gmail.com",
-    "contrasena": "j12345"
+    "contrasena": os.environ.get("TEST_PASSWORD", "INGRESE_PASSWORD_AQUI")
 }
 
 try:

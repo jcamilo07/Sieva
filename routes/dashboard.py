@@ -117,8 +117,38 @@ def index():
 
     # 5. KPIs Globales
     total_correct = sum(1 for cid, stars in casos_calificados_dict.items() if stars >= 4)
+    total_incorrect = sum(1 for cid, stars in casos_calificados_dict.items() if stars <= 2)
+    total_partial = sum(1 for cid, stars in casos_calificados_dict.items() if stars == 3)
     precision_global = round((total_correct / total_graded * 100), 1) if total_graded > 0 else 0.0
     veracidad_prom_global = round(sum(stars for cid, stars in casos_calificados_dict.items()) / total_graded, 2) if total_graded > 0 else 0.0
+
+    # 5b. Distribucion por dificultad
+    dist_dificultad = {'Bajo': 0, 'Medio': 0, 'Alto': 0}
+    for case in casos:
+        d = norm_diff(case.get('nivel_dificultad'))
+        dist_dificultad[d] += 1
+    total_dist = sum(dist_dificultad.values()) or 1
+    dist_dificultad_pct = {k: round(v/total_dist*100,1) for k,v in dist_dificultad.items()}
+
+    # 5c. Errores por modelo (score <= 2)
+    errores_labels = [item['corto'] for item in tabla_modelos]
+    errores_values = []
+    aciertos_values = []
+    parciales_values = []
+    for item in tabla_modelos:
+        mid = item['id']
+        cases_m = [c for c in casos if c.get('modelo_id') == mid]
+        graded_m = [c for c in cases_m if c.get('id') in casos_calificados_dict]
+        errores_values.append(sum(1 for c in graded_m if casos_calificados_dict[c['id']] <= 2))
+        parciales_values.append(sum(1 for c in graded_m if casos_calificados_dict[c['id']] == 3))
+        aciertos_values.append(sum(1 for c in graded_m if casos_calificados_dict[c['id']] >= 4))
+
+    # 5d. Precision promedio por dificultad (todos los modelos combinados)
+    prec_avg_diff = {}
+    for d in ['Bajo','Medio','Alto']:
+        cases_d = [c for c in casos if norm_diff(c.get('nivel_dificultad')) == d and c.get('id') in casos_calificados_dict]
+        correct_d = [c for c in cases_d if casos_calificados_dict[c['id']] >= 4]
+        prec_avg_diff[d] = round(len(correct_d)/len(cases_d)*100,1) if cases_d else 0.0
 
     # 6. Datos para Gráficos
     nombres = [item['corto'] for item in tabla_modelos]
@@ -231,7 +261,6 @@ def index():
 
     return render_template(
         'pages/dashboard.html',
-        # KPIs de Cabecera
         total_casos=total_casos,
         total_modelos=total_modelos,
         total_especialidades=total_especialidades,
@@ -240,9 +269,10 @@ def index():
         progreso_evaluacion=progreso_evaluacion,
         precision_global=precision_global,
         veracidad_prom_global=veracidad_prom_global,
-        # Tabla de Rendimiento
+        total_correct=total_correct,
+        total_incorrect=total_incorrect,
+        total_partial=total_partial,
         tabla_modelos=tabla_modelos,
-        # Datos JSON para Gráficos
         bar_precision_labels=json.dumps(bar_precision_labels),
         bar_precision_bajo=json.dumps(bar_precision_bajo),
         bar_precision_medio=json.dumps(bar_precision_medio),
@@ -250,13 +280,16 @@ def index():
         bar_ver_labels=json.dumps(bar_ver_labels),
         bar_ver_values=json.dumps(bar_ver_values),
         scatter_data=json.dumps(scatter_data),
-        # Heatmap
         heatmap_rows=heatmap_rows,
-        modelos_cortos=json.dumps([m['nombre'] for m in modelos]),
-        # Distribución de Especialidades
         especialidades=especialidades_data,
         max_esp_count=max_esp_count,
-        # KPIs Footer
+        dist_dificultad=dist_dificultad,
+        dist_dificultad_pct=dist_dificultad_pct,
+        errores_labels=json.dumps(errores_labels),
+        errores_values=json.dumps(errores_values),
+        aciertos_values=json.dumps(aciertos_values),
+        parciales_values=json.dumps(parciales_values),
+        prec_avg_diff=prec_avg_diff,
         mejor_ver_modelo=mejor_ver_modelo,
         mejor_ver_val=mejor_ver_val,
         mejor_ver_precision=mejor_ver_precision,

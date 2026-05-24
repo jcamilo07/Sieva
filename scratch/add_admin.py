@@ -9,11 +9,13 @@ auth = AuthService()
 token = auth._get_admin_token()
 headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
-# 1. Crear el usuario jpablolujanborraez@gmail.com con clave 1234567
+import os
+# 1. Crear el usuario jpablolujanborraez@gmail.com con clave (usar variable de entorno o input manual)
+password_admin = os.environ.get("ADMIN1_PASSWORD_PLAIN", "INGRESE_PASSWORD_AQUI")
 usuario = {
     "nombre": "J Pablo Lujan Borraez",
     "email": "jpablolujanborraez@gmail.com",
-    "password_hash": "1234567",
+    "password_hash": password_admin,
     "activo": True
 }
 print("Creando usuario...")
