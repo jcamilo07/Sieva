@@ -28,7 +28,7 @@ def index():
     modelos = api.listar('modelos') or []
     casos = api.listar('casos_clinicos') or []
     especialidades = api.listar('especialidades') or []
-    caso_clinico_especialidad = api.listar('caso_clinico_especialidad') or []
+    caso_clinico_especialidad = api.listar('caso_clinico_especialidad', limite=10000) or []
 
     # 2. Cargar calificaciones locales del evaluador médico (SQLite)
     locales = {}

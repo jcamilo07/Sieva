@@ -69,7 +69,7 @@ def _eliminar_relacion(caso_id, especialidad_id):
 
 def _crear_relacion(caso_id, especialidad_id):
     try:
-        relaciones = api.listar(TABLA_ESP)
+        relaciones = api.listar(TABLA_ESP, limite=10000)
         caso_id = int(caso_id)
         especialidad_id = int(especialidad_id)
 
@@ -185,7 +185,7 @@ def index():
 
     # ESPECIALIDADES
     especialidades     = api.listar('especialidades')
-    casos_especialidad = api.listar(TABLA_ESP)
+    casos_especialidad = api.listar(TABLA_ESP, limite=10000)
     esp_dict           = {e['id']: e['nombre'] for e in especialidades}
 
     caso_esp_map = {}
