@@ -206,8 +206,8 @@ body, html body, body .page, body main, body main .content, body article.content
   <div class="two-col">
     <div class="dash-card">
       <div class="card-title-d">Top — precisión diagnóstica por modelo</div>
-      <div class="card-sub-d">% de coincidencia entre diagnóstico IA y diagnóstico humano</div>
-      {% if total_graded > 0 %}
+      <div class="card-sub-d">% de similitud textual entre el diagnóstico de la IA y el diagnóstico humano</div>
+      {% if total_con_diagnostico > 0 %}
       <div class="chart-wrap" style="height:350px;"><canvas id="chartTopPrecision"></canvas></div>
       {% else %}
       <div class="empty-state-wrap" style="height:350px;">
@@ -454,12 +454,14 @@ document.addEventListener('DOMContentLoaded', function () {
   ];
 
   const modelsData = {{ tabla_modelos | tojson | safe }};
+  // Modelos con diagnósticos (para gráfico de precisión textual)
+  const diagModels = modelsData.filter(m => m.diag_count > 0);
+  // Modelos con calificaciones del médico (para gráfico de veracidad)
   const activeModels = modelsData.filter(m => m.graded_count > 0);
   
-  {% if total_graded > 0 %}
-  /* ── 1. TOP PRECISIÓN (HORIZONTAL BAR) ── */
+  /* ── 1. TOP PRECISIÓN TEXTUAL (VERTICAL BAR — independiente de calificación) ── */
   if (document.getElementById('chartTopPrecision')) {
-    const byPrec = [...activeModels].sort((a,b) => b.global - a.global);
+    const byPrec = [...diagModels].sort((a,b) => b.global - a.global);
     new Chart(document.getElementById('chartTopPrecision'), {
       type: 'bar',
       data: {
@@ -482,7 +484,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* ── 2. TOP VERACIDAD (HORIZONTAL BAR) ── */
+  {% if total_graded > 0 %}
+  /* ── 2. TOP VERACIDAD (VERTICAL BAR — depende de calificaciones) ── */
   if (document.getElementById('chartTopVeracidad')) {
     const byVer = [...activeModels].sort((a,b) => b.veracidad - a.veracidad);
     new Chart(document.getElementById('chartTopVeracidad'), {

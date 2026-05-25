@@ -84,17 +84,17 @@ def index():
         stars_half = 1 if (veracidad_m - stars_full) >= 0.25 else 0
         stars_empty = 5 - stars_full - stars_half
 
-        # Precisión Global (Similitud de textos)
-        sim_scores = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in graded_m]
+        # Precisión Global (Similitud de textos) — independiente de la calificación del doctor
+        # Se calcula para TODOS los casos del modelo que tengan ambos diagnósticos llenos
+        cases_m_con_diag = [c for c in cases_m if c.get('diagnostico_ia') and c.get('diagnostico_humano')]
+        sim_scores = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in cases_m_con_diag]
         precision_global_m = (sum(sim_scores) / len(sim_scores)) if sim_scores else 0.0
 
-        # Precisión por dificultad
+        # Precisión por dificultad — también independiente de calificación
         precision_by_diff = {}
         for d_level in ['Bajo', 'Medio', 'Alto']:
-            cases_m_d = [c for c in cases_m if norm_diff(c.get('nivel_dificultad')) == d_level]
-            graded_m_d = [c for c in cases_m_d if c.get('id') in casos_calificados_dict]
-            
-            sim_scores_d = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in graded_m_d]
+            cases_m_d = [c for c in cases_m_con_diag if norm_diff(c.get('nivel_dificultad')) == d_level]
+            sim_scores_d = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in cases_m_d]
             precision_by_diff[d_level] = round((sum(sim_scores_d) / len(sim_scores_d)), 1) if sim_scores_d else 0.0
 
         # Mejor dificultad
@@ -116,6 +116,7 @@ def index():
             'stars_half':   stars_half,
             'stars_empty':  stars_empty,
             'graded_count': len(graded_m),
+            'diag_count':   len(cases_m_con_diag),  # casos con ambos diagnósticos (para precisión)
         })
 
     # Ordenar por precisión global descendente, luego veracidad, y finalmente ID
@@ -128,7 +129,11 @@ def index():
     total_incorrect = sum(1 for cid, stars in casos_calificados_dict.items() if stars <= 2)
     total_partial = sum(1 for cid, stars in casos_calificados_dict.items() if stars == 3)
     
-    total_sim_scores = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in casos if c.get('id') in casos_calificados_dict]
+    # Precisión global: todos los casos con ambos diagnósticos, sin depender de calificación
+    total_sim_scores = [
+        text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano'))
+        for c in casos if c.get('diagnostico_ia') and c.get('diagnostico_humano')
+    ]
     precision_global = round((sum(total_sim_scores) / len(total_sim_scores)), 1) if total_sim_scores else 0.0
     
     veracidad_prom_global = round(sum(stars for cid, stars in casos_calificados_dict.items()) / total_graded, 2) if total_graded > 0 else 0.0
@@ -155,9 +160,14 @@ def index():
         aciertos_values.append(sum(1 for c in graded_m if casos_calificados_dict[c['id']] >= 4))
 
     # 5d. Precision promedio por dificultad (todos los modelos combinados)
+    # Precisión promedio por dificultad — todos los casos con ambos diagnósticos
     prec_avg_diff = {}
     for d in ['Bajo','Medio','Alto']:
-        cases_d = [c for c in casos if norm_diff(c.get('nivel_dificultad')) == d and c.get('id') in casos_calificados_dict]
+        cases_d = [
+            c for c in casos
+            if norm_diff(c.get('nivel_dificultad')) == d
+            and c.get('diagnostico_ia') and c.get('diagnostico_humano')
+        ]
         sim_scores_d = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in cases_d]
         prec_avg_diff[d] = round(sum(sim_scores_d)/len(sim_scores_d), 1) if sim_scores_d else 0.0
 
@@ -270,6 +280,11 @@ def index():
     esp_mas_frecuente = especialidades_data[0][0] if especialidades_data else "Ninguna"
     esp_mas_freq_count = especialidades_data[0][1] if especialidades_data else 0
 
+    # Casos con AMBOS diagnósticos llenos (para gráfico de precisión textual)
+    total_con_diagnostico = sum(
+        1 for item in tabla_modelos if item.get('diag_count', 0) > 0
+    )
+
     return render_template(
         'pages/dashboard.html',
         total_casos=total_casos,
@@ -277,6 +292,7 @@ def index():
         total_especialidades=total_especialidades,
         total_graded=total_graded,
         total_pending=total_pending,
+        total_con_diagnostico=total_con_diagnostico,
         progreso_evaluacion=progreso_evaluacion,
         precision_global=precision_global,
         veracidad_prom_global=veracidad_prom_global,
