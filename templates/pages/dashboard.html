@@ -25,15 +25,15 @@ body, html body, body .page, body main, body main .content, body article.content
   --ts:           #94a3b8;
   --tm:           #64748b;
   
-  --gold:         #dca54c;
-  --blue:         #5378c6;
-  --green:        #4e9a66;
-  --amber:        #c28c46;
-  --red:          #c25c56;
-  --brown:        #94653b;
-  --purple:       #8854d0;
-  --pink:         #e84393;
-  --gray:         #636e72;
+  --gold:         #ffc107;
+  --blue:         #3b82f6;
+  --green:        #10b981;
+  --amber:        #f59e0b;
+  --red:          #ef4444;
+  --brown:        #92400e;
+  --purple:       #8b5cf6;
+  --pink:         #ec4899;
+  --gray:         #64748b;
   
   --rcard:        12px;
   --rsm:          8px;
@@ -91,12 +91,12 @@ body, html body, body .page, body main, body main .content, body article.content
 
 /* ══ TARJETAS DE DIFICULTAD DOUGHNUT ══ */
 .diff-card { flex: 1; text-align: center; padding: 0.8rem 0.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-.diff-baja { background: rgba(78, 154, 102, 0.15); border-color: rgba(78, 154, 102, 0.3); }
-.diff-baja .d-val { color: #72b887; }
-.diff-media { background: rgba(194, 140, 70, 0.15); border-color: rgba(194, 140, 70, 0.3); }
-.diff-media .d-val { color: #d6a461; }
-.diff-alta { background: rgba(194, 92, 86, 0.15); border-color: rgba(194, 92, 86, 0.3); }
-.diff-alta .d-val { color: #d6716b; }
+.diff-baja { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); }
+.diff-baja .d-val { color: #34d399; }
+.diff-media { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); }
+.diff-media .d-val { color: #fbbf24; }
+.diff-alta { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
+.diff-alta .d-val { color: #f87171; }
 .d-val { font-size: 1.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.2rem; }
 .d-label { font-size: 0.85rem; font-weight: 700; color: var(--tp); }
 .d-pct { font-size: 0.75rem; color: var(--ts); }
@@ -447,10 +447,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const GRID  = 'rgba(66, 74, 89, 0.4)';
   const TIP = { backgroundColor: '#232730', borderColor: '#424a59', borderWidth: 1, padding: 12, cornerRadius: 8 };
 
-  // Paleta de colores variada y profesional para modelos
+  // Paleta de colores variada y viva
   const COLORS = [
-    '#5378c6', '#4e9a66', '#c28c46', '#dca54c', '#c25c56', 
-    '#8854d0', '#e84393', '#b33939', '#636e72', '#2c3e50'
+    '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
+    '#ec4899', '#06b6d4', '#84cc16', '#f43f5e', '#6366f1'
   ];
 
   const modelsData = {{ tabla_modelos | tojson | safe }};
@@ -472,12 +472,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }]
       },
       options: {
-        indexAxis: 'y',
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Precisión: ${c.parsed.x}%` } } },
+        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Precisión: ${c.parsed.y}%` } } },
         scales: {
-          x: { beginAtZero: true, max: 100, grid: { color: GRID }, ticks: { callback: v => v + '%' } },
-          y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 500 } } }
+          x: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 500 } } },
+          y: { beginAtZero: true, max: 100, grid: { color: GRID }, ticks: { callback: v => v + '%' } }
         }
       }
     });
@@ -498,12 +497,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }]
       },
       options: {
-        indexAxis: 'y',
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Veracidad: ${c.parsed.x} ★` } } },
+        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Veracidad: ${c.parsed.y} ★` } } },
         scales: {
-          x: { beginAtZero: true, min: 1, max: 5, grid: { color: GRID }, ticks: { callback: v => v + ' ★' } },
-          y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 500 } } }
+          x: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 500 } } },
+          y: { beginAtZero: true, min: 1, max: 5, grid: { color: GRID }, ticks: { callback: v => v + ' ★' } }
         }
       }
     });
@@ -547,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function () {
           labels: ['Baja', 'Media', 'Alta'],
           datasets: [{
             data: dVals,
-            backgroundColor: ['#4e9a66', '#c28c46', '#c25c56'],
+            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
             borderWidth: 0,
             hoverOffset: 4
           }]
@@ -593,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function () {
         labels: ['Baja', 'Media', 'Alta'],
         datasets: [{
           data: [{{ prec_avg_diff.get('Bajo', 0) }}, {{ prec_avg_diff.get('Medio', 0) }}, {{ prec_avg_diff.get('Alto', 0) }}],
-          backgroundColor: ['#4e9a66', '#c28c46', '#c25c56'],
+          backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
           borderRadius: 4, barPercentage: 0.5
         }]
       },

@@ -13,6 +13,13 @@ api = create_service()
 
 DB_PATH = 'data.db'
 
+import difflib
+
+def text_similarity(text1, text2):
+    if not text1 or not text2:
+        return 0.0
+    return difflib.SequenceMatcher(None, str(text1).lower(), str(text2).lower()).ratio() * 100.0
+
 def norm_diff(d):
     """Normaliza el nivel de dificultad a primera letra mayúscula."""
     if not d:
@@ -77,17 +84,18 @@ def index():
         stars_half = 1 if (veracidad_m - stars_full) >= 0.25 else 0
         stars_empty = 5 - stars_full - stars_half
 
-        # Precisión Global (calificacion_ia >= 4)
-        correct_m = [c for c in graded_m if casos_calificados_dict[c['id']] >= 4]
-        precision_global_m = (len(correct_m) / len(graded_m) * 100.0) if len(graded_m) > 0 else 0.0
+        # Precisión Global (Similitud de textos)
+        sim_scores = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in graded_m]
+        precision_global_m = (sum(sim_scores) / len(sim_scores)) if sim_scores else 0.0
 
         # Precisión por dificultad
         precision_by_diff = {}
         for d_level in ['Bajo', 'Medio', 'Alto']:
             cases_m_d = [c for c in cases_m if norm_diff(c.get('nivel_dificultad')) == d_level]
             graded_m_d = [c for c in cases_m_d if c.get('id') in casos_calificados_dict]
-            correct_m_d = [c for c in graded_m_d if casos_calificados_dict[c['id']] >= 4]
-            precision_by_diff[d_level] = round((len(correct_m_d) / len(graded_m_d) * 100.0), 1) if len(graded_m_d) > 0 else 0.0
+            
+            sim_scores_d = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in graded_m_d]
+            precision_by_diff[d_level] = round((sum(sim_scores_d) / len(sim_scores_d)), 1) if sim_scores_d else 0.0
 
         # Mejor dificultad
         mejor_diff_m = max(['Bajo', 'Medio', 'Alto'], key=lambda d: precision_by_diff[d])
@@ -119,7 +127,10 @@ def index():
     total_correct = sum(1 for cid, stars in casos_calificados_dict.items() if stars >= 4)
     total_incorrect = sum(1 for cid, stars in casos_calificados_dict.items() if stars <= 2)
     total_partial = sum(1 for cid, stars in casos_calificados_dict.items() if stars == 3)
-    precision_global = round((total_correct / total_graded * 100), 1) if total_graded > 0 else 0.0
+    
+    total_sim_scores = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in casos if c.get('id') in casos_calificados_dict]
+    precision_global = round((sum(total_sim_scores) / len(total_sim_scores)), 1) if total_sim_scores else 0.0
+    
     veracidad_prom_global = round(sum(stars for cid, stars in casos_calificados_dict.items()) / total_graded, 2) if total_graded > 0 else 0.0
 
     # 5b. Distribucion por dificultad
@@ -147,8 +158,8 @@ def index():
     prec_avg_diff = {}
     for d in ['Bajo','Medio','Alto']:
         cases_d = [c for c in casos if norm_diff(c.get('nivel_dificultad')) == d and c.get('id') in casos_calificados_dict]
-        correct_d = [c for c in cases_d if casos_calificados_dict[c['id']] >= 4]
-        prec_avg_diff[d] = round(len(correct_d)/len(cases_d)*100,1) if cases_d else 0.0
+        sim_scores_d = [text_similarity(c.get('diagnostico_ia'), c.get('diagnostico_humano')) for c in cases_d]
+        prec_avg_diff[d] = round(sum(sim_scores_d)/len(sim_scores_d), 1) if sim_scores_d else 0.0
 
     # 6. Datos para Gráficos
     nombres = [item['corto'] for item in tabla_modelos]
