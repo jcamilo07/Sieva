@@ -3,164 +3,173 @@
 {% block title %}Dashboard · Criterio #1 Veracidad{% endblock %}
 
 {% block head %}
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-/* ══ OVERRIDE GLOBAL — FUERZA TEMA OSCURO ══ */
+/* ══ OVERRIDE GLOBAL — TEMA OSCURO PREMIUM ULTRA-VIVO ══ */
 body, html body, body .page, body main, body main .content, body article.content {
-  background-color: #1a1d24 !important;
-  background: #1a1d24 !important;
-  color: #e2e8f0 !important;
-  font-family: 'Inter', sans-serif !important;
+  background-color: #080c14 !important;
+  background: radial-gradient(circle at top right, #0e172a, #080c14) !important;
+  color: #f8fafc !important;
+  font-family: 'Outfit', sans-serif !important;
 }
 
-/* ══ VARIABLES (Colores profesionales y desaturados) ══ */
+/* ══ VARIABLES DE DISEÑO (Colores Vibrantes y Eléctricos) ══ */
 :root {
-  --bg-dark:      #1a1d24;
-  --surf1:        #232730;
-  --surf2:        #2b303b;
-  --surf3:        #373d49;
-  --bd:           #424a59;
-  --tp:           #e2e8f0;
+  --bg-dark:      #080c14;
+  --surf1:        rgba(15, 23, 42, 0.65); /* Glassmorphism background */
+  --surf2:        rgba(30, 41, 59, 0.8);
+  --surf3:        #1e293b;
+  --bd:           rgba(99, 102, 241, 0.25); /* Indigo electric border */
+  --bd-glow:      rgba(99, 102, 241, 0.4);
+  --tp:           #f8fafc;
   --ts:           #94a3b8;
   --tm:           #64748b;
   
-  --gold:         #ffc107;
+  /* Paleta viva y neón */
+  --gold:         #fbbf24;
   --blue:         #3b82f6;
+  --indigo:       #6366f1;
+  --emerald:      #10b981;
   --green:        #10b981;
   --amber:        #f59e0b;
   --red:          #ef4444;
-  --brown:        #92400e;
   --purple:       #8b5cf6;
   --pink:         #ec4899;
-  --gray:         #64748b;
+  --cyan:         #06b6d4;
   
-  --rcard:        12px;
-  --rsm:          8px;
+  --rcard:        16px;
+  --rsm:          10px;
 }
 
 /* ══ DASH ROOT ══ */
-.dash-root { max-width: 1380px; margin: 0 auto; padding: 0 1.25rem 3rem; }
+.dash-root { max-width: 1400px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
 
 /* ══ 1. HEADER CRITERIO ══ */
 .criterio-header {
-  background: linear-gradient(90deg, #202b42, #243250 60%, #1e273a) !important;
-  border-bottom: 1px solid #32446a; padding: .85rem 1.5rem; display: flex !important;
-  align-items: center; gap: 1rem; margin-bottom: 1.25rem; border-radius: var(--rsm);
+  background: linear-gradient(135deg, #1e1b4b, #311042) !important;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+  padding: 1.25rem 2rem; display: flex !important;
+  align-items: center; gap: 1.25rem; margin-bottom: 1.5rem; border-radius: var(--rcard);
 }
-.criterio-badge { background: #39528f; color: #fff; font-size: .72rem; font-weight: 700; padding: .28rem .7rem; border-radius: 4px; letter-spacing: .05em; white-space: nowrap; }
-.criterio-title { font-size:1.05rem; font-weight:700; color:#f8fafc; white-space:nowrap; }
-.criterio-sep   { color:#4a6abf; }
-.criterio-desc  { font-size:.88rem; color:#cbd5e1; }
+.criterio-badge { background: linear-gradient(90deg, #6366f1, #a855f7); color: #fff; font-size: .8rem; font-weight: 800; padding: .35rem .9rem; border-radius: 6px; letter-spacing: .05em; white-space: nowrap; box-shadow: 0 0 10px rgba(99, 102, 241, 0.4); }
+.criterio-title { font-size:1.35rem; font-weight:900; color:#fff; white-space:nowrap; letter-spacing: -0.02em; }
+.criterio-sep   { color:#818cf8; font-weight: 300; }
+.criterio-desc  { font-size:.95rem; color:#cbd5e1; font-weight: 400; }
 
-/* ══ PROGRESO Y EMPTY STATE ══ */
+/* ══ PROGRESO Y BANNER ══ */
 .progress-banner {
-  background: rgba(35, 39, 48, 0.8) !important; border: 1px solid var(--bd) !important;
-  border-radius: var(--rcard) !important; padding: 1rem 1.25rem !important; margin-bottom: 1.25rem;
+  background: var(--surf1) !important; border: 1px solid var(--bd) !important;
+  border-radius: var(--rcard) !important; padding: 1.25rem 1.75rem !important; margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
-.progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
-.progress-title { font-size: 0.88rem; font-weight: 700; color: var(--tp); display: flex; align-items: center; gap: 0.5rem; }
-.progress-title i { color: var(--blue); font-size: 1.05rem; }
-.progress-pct { font-size: 1rem; font-weight: 800; color: var(--blue); }
-.progress-bar-container { width: 100%; height: 6px; background: var(--surf3); border-radius: 3px; overflow: hidden; margin-bottom: 0.6rem; }
-.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--green)) !important; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-.progress-disclaimer { font-size: 0.74rem; color: var(--ts); line-height: 1.4; }
-.progress-disclaimer strong { color: var(--tp); }
+.progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.progress-title { font-size: 0.95rem; font-weight: 800; color: var(--tp); display: flex; align-items: center; gap: 0.6rem; }
+.progress-title i { color: #818cf8; font-size: 1.2rem; filter: drop-shadow(0 0 5px #818cf8); }
+.progress-pct { font-size: 1.15rem; font-weight: 900; color: #818cf8; }
+.progress-bar-container { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; margin-bottom: 0.75rem; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #10b981) !important; border-radius: 4px; transition: width 0.8s ease; }
+.progress-disclaimer { font-size: 0.8rem; color: var(--ts); line-height: 1.5; }
+.progress-disclaimer strong { color: #f8fafc; }
 
 .empty-state-wrap {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  height: 100%; min-height: 200px; text-align: center; padding: 2rem;
-  background: rgba(35, 39, 48, 0.4) !important; border: 1px dashed var(--bd) !important; border-radius: var(--rsm) !important;
+  height: 100%; min-height: 250px; text-align: center; padding: 2rem;
+  background: rgba(15, 23, 42, 0.3) !important; border: 1px dashed var(--bd) !important; border-radius: var(--rcard) !important;
 }
-.empty-icon { font-size: 2.2rem; color: var(--tm); margin-bottom: 0.75rem; }
-.empty-title { font-size: 0.9rem; font-weight: 700; color: var(--tp); margin-bottom: 0.35rem; }
-.empty-desc { font-size: 0.76rem; color: var(--ts); max-width: 320px; line-height: 1.45; }
+.empty-icon { font-size: 2.5rem; color: var(--tm); margin-bottom: 1rem; }
+.empty-title { font-size: 1rem; font-weight: 700; color: var(--tp); margin-bottom: 0.5rem; }
 
-/* ══ DASH-CARD BASE ══ */
+/* ══ DASH-CARD BASE (Vivos y Elevados) ══ */
 .dash-card {
-  background: var(--surf1) !important; border: 1px solid var(--bd) !important;
-  border-radius: var(--rcard) !important; padding: 1.5rem !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important; margin-bottom: 1.25rem;
+  background: var(--surf1) !important; 
+  border: 1px solid var(--bd) !important;
+  border-radius: var(--rcard) !important; padding: 1.75rem !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important; margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.card-title-d { font-size:1.05rem; font-weight:800; color:var(--tp); margin-bottom:.3rem; letter-spacing:-0.02em; }
-.card-sub-d   { font-size:.82rem; color:var(--ts); margin-bottom:1.25rem; line-height:1.5; font-weight:400; }
+.dash-card:hover {
+  border-color: var(--bd-glow) !important;
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15) !important;
+}
+.card-title-d { font-size:1.15rem; font-weight:900; color:var(--tp); margin-bottom:.4rem; letter-spacing:-0.02em; }
+.card-sub-d   { font-size:.85rem; color:var(--ts); margin-bottom:1.5rem; line-height:1.5; font-weight:400; }
 
-/* ══ TWO-COL GRID ══ */
-.two-col { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1.25rem; margin-bottom: 1.25rem; }
-.chart-wrap { position:relative; height:300px; width:100%; }
+/* ══ LAYOUT GRIDS ══ */
+.two-col { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1.5rem; margin-bottom: 1.5rem; }
+.chart-wrap { position:relative; height:320px; width:100%; }
 
-/* ══ TARJETAS DE DIFICULTAD DOUGHNUT ══ */
-.diff-card { flex: 1; text-align: center; padding: 0.8rem 0.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-.diff-baja { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); }
-.diff-baja .d-val { color: #34d399; }
-.diff-media { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); }
-.diff-media .d-val { color: #fbbf24; }
-.diff-alta { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
-.diff-alta .d-val { color: #f87171; }
-.d-val { font-size: 1.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.2rem; }
+/* ══ DIFICULTAD DOUGHNUT CARDS ══ */
+.diff-card { flex: 1; text-align: center; padding: 0.9rem 0.5rem; border-radius: var(--rsm); border: 1px solid rgba(255,255,255,0.05); }
+.diff-baja { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.25); }
+.diff-baja .d-val { color: #10b981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+.diff-media { background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.25); }
+.diff-media .d-val { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+.diff-alta { background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.25); }
+.diff-alta .d-val { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+.d-val { font-size: 1.6rem; font-weight: 900; line-height: 1.1; margin-bottom: 0.2rem; }
 .d-label { font-size: 0.85rem; font-weight: 700; color: var(--tp); }
 .d-pct { font-size: 0.75rem; color: var(--ts); }
 
-/* ══ MATRIZ CUADRANTES ══ */
+/* ══ MATRIZ CUADRANTES VIVAS ══ */
 .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 .matrix-cell {
-  border-radius: var(--rsm); padding: 2rem 1.5rem; text-align: center; display: flex;
-  flex-direction: column; justify-content: center; align-items: center; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  border-radius: var(--rsm); padding: 1.75rem 1.25rem; text-align: center; display: flex;
+  flex-direction: column; justify-content: center; align-items: center; border: 1px solid rgba(255,255,255,0.05);
 }
-.m-pct { font-size: 2.4rem; font-weight: 800; line-height: 1; margin-bottom: 0.5rem; }
-.m-label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em; }
-.m-green { background: rgba(39, 110, 58, 0.25); color: #8cd6a3; }
-.m-amber { background: rgba(158, 108, 40, 0.25); color: #e6b771; }
-.m-brown { background: rgba(117, 74, 35, 0.25); color: #d6985e; }
-.m-red   { background: rgba(148, 56, 56, 0.25); color: #e88d89; }
+.m-pct { font-size: 2.2rem; font-weight: 900; line-height: 1; margin-bottom: 0.4rem; }
+.m-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.02em; }
+.m-green { background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(16, 185, 129, 0.2); }
+.m-amber { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border-color: rgba(245, 158, 11, 0.2); }
+.m-brown { background: rgba(146, 64, 14, 0.15); color: #fb923c; border-color: rgba(146, 64, 14, 0.2); }
+.m-red   { background: rgba(239, 68, 68, 0.12); color: #f87171; border-color: rgba(239, 68, 68, 0.2); }
 
-/* ══ TABLA ══ */
-.perf-table { width:100%; border-collapse:collapse; font-size:.85rem; background:transparent !important; }
-.perf-table thead tr { border-bottom: 1px solid var(--bd); }
+/* ══ TABLA ELEGANTE ══ */
+.perf-table { width:100%; border-collapse:collapse; font-size:.88rem; background:transparent !important; }
+.perf-table thead tr { border-bottom: 2px solid var(--bd); }
 .perf-table thead th {
-  color: var(--ts) !important; font-weight: 600 !important; font-size: .75rem !important;
-  padding: .6rem !important; text-align: left !important; white-space: nowrap !important;
-  border: none !important; text-transform: none !important;
+  color: var(--tp) !important; font-weight: 800 !important; font-size: .8rem !important;
+  padding: .75rem .6rem !important; text-align: left !important; white-space: nowrap !important;
+  border: none !important; text-transform: uppercase !important; letter-spacing: 0.05em;
 }
-.perf-table tbody tr { border-bottom:1px solid rgba(66, 74, 89, 0.4); transition:background .15s; }
-.perf-table tbody tr:hover { background: var(--surf2) !important; }
-.perf-table td { padding: .85rem .6rem !important; vertical-align: middle !important; border: none !important; color: var(--tp) !important; }
+.perf-table tbody tr { border-bottom:1px solid rgba(255, 255, 255, 0.08); transition:background .15s; }
+.perf-table tbody tr:hover { background: rgba(255,255,255,0.04) !important; }
+.perf-table td { padding: 1rem .6rem !important; vertical-align: middle !important; border: none !important; color: var(--tp) !important; }
 
-.td-rank { color:var(--tm); font-weight:700; font-size:.85rem; width:32px; }
-.td-model-name { font-weight:700; font-size:.9rem; color:var(--tp); letter-spacing:-0.01em; }
-.td-model-ver { font-size:.75rem; color:var(--ts); }
-.badge-dif { display:inline-block; padding:.25rem .6rem; border-radius:4px; font-size:.72rem; font-weight:700; color:#fff; }
-.badge-bajo  { background: var(--green) !important; }
-.badge-medio { background: var(--amber) !important; }
-.badge-alto  { background: var(--red) !important; }
-.td-pct { color:var(--ts); font-size:.85rem; }
-.prec-bar-wrap { display:flex; align-items:center; gap:.6rem; }
-.prec-bar-bg { flex:1; height:6px; background:var(--surf3); border-radius:3px; min-width:80px; max-width:120px; overflow:hidden; }
-.prec-bar-fill { height:100%; background:var(--blue); border-radius:3px; }
-.prec-pct-val { font-size:.85rem; font-weight:700; color:var(--tp); white-space:nowrap; }
-.stars-cell i { font-size:.85rem; }
-.star-fill, .star-half { color:var(--gold); }
-.star-empty { color:var(--surf3); }
-.star-val { font-size:.85rem; font-weight:700; color:var(--ts); margin-left:.3rem; }
+.td-rank { color:#6366f1; font-weight:900; font-size:1rem; width:32px; }
+.td-model-name { font-weight:800; font-size:.95rem; color:var(--tp); letter-spacing:-0.01em; }
+.td-model-ver { font-size:.78rem; color:var(--ts); margin-top: 0.15rem; }
+.badge-dif { display:inline-block; padding:.3rem .75rem; border-radius:6px; font-size:.72rem; font-weight:800; color:#fff; text-transform: uppercase; letter-spacing: 0.03em; }
+.badge-bajo  { background: #10b981 !important; box-shadow: 0 0 8px rgba(16,185,129,0.3); }
+.badge-medio { background: #f59e0b !important; box-shadow: 0 0 8px rgba(245,158,11,0.3); }
+.badge-alto  { background: #ef4444 !important; box-shadow: 0 0 8px rgba(239,68,68,0.3); }
+.td-pct { color:var(--tp); font-size:.9rem; font-weight: 700; }
+.stars-cell i { font-size:.9rem; margin-right: 2px; }
+.star-fill, .star-half { color:var(--gold); filter: drop-shadow(0 0 3px rgba(251,191,36,0.5)); }
+.star-empty { color:rgba(255,255,255,0.15); }
+.star-val { font-size:.9rem; font-weight:800; color:var(--tp); margin-left:.4rem; }
 
 /* ══ ESPECIALIDADES ══ */
-.esp-grid { display: grid !important; grid-template-columns: repeat(3,1fr) !important; gap: .6rem 1.5rem; margin-top: 1rem; }
-.esp-row { display:flex; align-items:center; gap:.6rem; padding:.4rem 0; border-bottom:1px solid rgba(66, 74, 89, 0.4); }
-.esp-nombre { flex:1; font-size:.82rem; font-weight:500; color:var(--tp); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.esp-bar-bg { width:70px; height:5px; background:var(--surf3); border-radius:3px; flex-shrink:0; overflow:hidden; }
-.esp-bar-fill{ height:100%; background:var(--blue); border-radius:3px; }
-.esp-count { font-size:.82rem; font-weight:700; color:var(--ts); width:20px; text-align:right; flex-shrink:0; }
+.esp-grid { display: grid !important; grid-template-columns: repeat(3,1fr) !important; gap: .8rem 1.5rem; margin-top: 1rem; }
+.esp-row { display:flex; align-items:center; gap:.75rem; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+.esp-nombre { flex:1; font-size:.85rem; font-weight:600; color:var(--tp); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.esp-bar-bg { width:80px; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; flex-shrink:0; overflow:hidden; }
+.esp-bar-fill{ height:100%; background: linear-gradient(90deg, #6366f1, #3b82f6); border-radius:3px; }
+.esp-count { font-size:.85rem; font-weight:800; color:#818cf8; width:25px; text-align:right; flex-shrink:0; }
 
-/* ══ FOOTER KPIs ══ */
+/* ══ FOOTER KPIs (Neon glow cards) ══ */
 .footer-kpis {
-  display: grid !important; grid-template-columns: repeat(4,1fr) !important; gap: 1rem; margin-top: 1.25rem;
+  display: grid !important; grid-template-columns: repeat(4,1fr) !important; gap: 1rem; margin-top: 1.5rem;
   background: var(--surf1) !important; border: 1px solid var(--bd) !important; border-radius: var(--rcard) !important;
-  padding: 1.25rem 1.5rem !important;
+  padding: 1.5rem 1.75rem !important;
 }
-.fkpi { display:flex; flex-direction:column; gap:.35rem; }
-.fkpi-label { font-size:.75rem; color:var(--ts); display:flex; align-items:center; gap:.4rem; font-weight:500; }
-.fkpi-model { font-size:1.1rem; font-weight:800; color:var(--tp); letter-spacing:-0.02em; }
-.fkpi-sub { font-size:.78rem; color:var(--tm); }
+.fkpi { display:flex; flex-direction:column; gap:.4rem; }
+.fkpi-label { font-size:.78rem; color:var(--ts); display:flex; align-items:center; gap:.4rem; font-weight:600; text-transform: uppercase; letter-spacing: 0.05em; }
+.fkpi-model { font-size:1.25rem; font-weight:900; color:var(--tp); letter-spacing:-0.02em; }
+.fkpi-sub { font-size:.82rem; color:#818cf8; font-weight: 600; }
 
 @media (max-width:1100px) { .two-col { grid-template-columns: 1fr !important; } .esp-grid { grid-template-columns: repeat(2,1fr) !important; } .footer-kpis { grid-template-columns: repeat(2,1fr) !important; } }
 @media (max-width:700px) { .matrix-grid { grid-template-columns: 1fr !important; } .esp-grid { grid-template-columns: 1fr !important; } .footer-kpis { grid-template-columns: 1fr !important; } }
@@ -172,15 +181,15 @@ body, html body, body .page, body main, body main .content, body article.content
 
   <div class="criterio-header">
     <span class="criterio-badge">Criterio #1</span>
-    <span class="criterio-title">Veracidad</span>
+    <span class="criterio-title">Veracidad Clínica</span>
     <span class="criterio-sep"> · </span>
-    <span class="criterio-desc">Calidad de respuesta diagnóstica evaluada por médico especialista</span>
+    <span class="criterio-desc">Evaluación del nivel de certeza y confianza diagnóstica por médicos especialistas</span>
   </div>
 
   <div class="progress-banner">
     <div class="progress-header">
       <div class="progress-title">
-        <i class="bi bi-activity"></i>
+        <i class="bi bi-heart-pulse-fill"></i>
         <span>Progreso de Calificación del Proyecto</span>
       </div>
       <div class="progress-pct">{{ progreso_evaluacion }}%</div>
@@ -189,70 +198,42 @@ body, html body, body .page, body main, body main .content, body article.content
       <div class="progress-bar-fill" style="width: {{ progreso_evaluacion }}%;"></div>
     </div>
     <div class="progress-disclaimer">
-      Estado: Se han calificado <strong>{{ total_graded }}</strong> de los <strong>{{ total_casos }}</strong> casos del benchmark. Los análisis se actualizan en tiempo real.
+      Estado: Se han calificado de manera experta <strong>{{ total_graded }}</strong> de los <strong>{{ total_casos }}</strong> casos del benchmark. Los análisis clínicos se actualizan en tiempo real.
     </div>
   </div>
 
   {% if total_graded == 0 %}
-  <div class="alert alert-warning d-flex align-items-center" style="background: rgba(194, 140, 70, 0.15) !important; border: 1px solid rgba(194, 140, 70, 0.3) !important; color: #e6b771 !important; border-radius: var(--rcard); padding: 1rem 1.25rem; margin-bottom: 1.25rem; font-size: 0.85rem; gap: 0.8rem;">
-    <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.2rem; color: var(--amber);"></i>
+  <div class="alert alert-warning d-flex align-items-center" style="background: rgba(245, 158, 11, 0.15) !important; border: 1px solid rgba(245, 158, 11, 0.3) !important; color: #fbbf24 !important; border-radius: var(--rcard); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; font-size: 0.9rem; gap: 1rem;">
+    <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5rem; color: var(--amber);"></i>
     <div>
-      <strong>Sin evaluaciones registradas:</strong> Aún no se han completado calificaciones en <a href="{{ url_for('casos_clinicos.index') }}" style="color: #e6b771 !important; text-decoration: underline; font-weight: 600;">Casos Clínicos</a>. El dashboard mostrará datos en tiempo real al evaluar.
+      <strong>Sin evaluaciones registradas:</strong> Aún no se han completado calificaciones en <a href="{{ url_for('casos_clinicos.index') }}" style="color: #fbbf24 !important; text-decoration: underline; font-weight: 700;">Casos Clínicos</a>. El dashboard mostrará datos clínicos reales inmediatamente al evaluar.
     </div>
   </div>
   {% endif %}
 
-  <!-- TOP CHARTS (PRECISIÓN Y VERACIDAD HORIZONTALES) -->
-  <div class="two-col">
-    <div class="dash-card">
-      <div class="card-title-d">Top — precisión diagnóstica por modelo</div>
-      <div class="card-sub-d">% de similitud textual entre el diagnóstico de la IA y el diagnóstico humano</div>
-      {% if total_con_diagnostico > 0 %}
-      <div class="chart-wrap" style="height:350px;"><canvas id="chartTopPrecision"></canvas></div>
-      {% else %}
-      <div class="empty-state-wrap" style="height:350px;">
-        <i class="bi bi-bar-chart-line empty-icon"></i>
-        <div class="empty-title">Sin datos de precisión</div>
-      </div>
-      {% endif %}
+  <!-- 1. GRÁFICO PRINCIPAL DE VERACIDAD (FULL WIDTH) -->
+  <div class="dash-card">
+    <div class="card-title-d">Top — Veracidad por modelo</div>
+    <div class="card-sub-d">Calificación media ponderada del médico especialista · criterio Veracidad (1 a 5 ★)</div>
+    {% if total_graded > 0 %}
+    <div class="chart-wrap" style="height:360px;"><canvas id="chartTopVeracidad"></canvas></div>
+    {% else %}
+    <div class="empty-state-wrap" style="height:360px;">
+      <i class="bi bi-star-fill empty-icon" style="color: var(--gold); filter: drop-shadow(0 0 8px rgba(251,191,36,0.4));"></i>
+      <div class="empty-title">Sin datos de veracidad médica registrados</div>
     </div>
-
-    <div class="dash-card">
-      <div class="card-title-d">Top — Veracidad por modelo</div>
-      <div class="card-sub-d">Calificación media del médico evaluador · criterio Veracidad (1-5)</div>
-      {% if total_graded > 0 %}
-      <div class="chart-wrap" style="height:350px;"><canvas id="chartTopVeracidad"></canvas></div>
-      {% else %}
-      <div class="empty-state-wrap" style="height:350px;">
-        <i class="bi bi-star empty-icon"></i>
-        <div class="empty-title">Sin datos de veracidad</div>
-      </div>
-      {% endif %}
-    </div>
+    {% endif %}
   </div>
 
-  <!-- SCATTER Y DOUGHNUT -->
+  <!-- 2. ANÁLISIS DE DIFICULTAD -->
   <div class="two-col">
-    <div class="dash-card">
-      <div class="card-title-d">Veracidad vs. precisión diagnóstica</div>
-      <div class="card-sub-d">Correlación entre calificación médica y acierto objetivo · cada punto = un modelo</div>
-      {% if total_graded > 0 %}
-      <div class="chart-wrap" style="height:320px;"><canvas id="chartScatter"></canvas></div>
-      {% else %}
-      <div class="empty-state-wrap" style="height:320px;">
-        <i class="bi bi-graph-up empty-icon"></i>
-        <div class="empty-title">Gráfico de dispersión en espera</div>
-      </div>
-      {% endif %}
-    </div>
-
     <div class="dash-card d-flex flex-column">
       <div class="card-title-d">Distribución de casos por dificultad</div>
-      <div class="card-sub-d">Composición del dataset · {{ total_casos }} diagnósticos generados en total</div>
+      <div class="card-sub-d">Composición total del dataset · {{ total_casos }} casos médicos generados</div>
       
-      <div class="chart-wrap flex-grow-1" style="height:220px; display:flex; justify-content:center;"><canvas id="chartDoughnut"></canvas></div>
+      <div class="chart-wrap flex-grow-1" style="height:230px; display:flex; justify-content:center;"><canvas id="chartDoughnut"></canvas></div>
       
-      <div class="d-flex justify-content-between mt-3 gap-2" style="margin-top:auto;">
+      <div class="d-flex justify-content-between mt-3 gap-2" style="margin-top:auto; padding-top: 1rem;">
         <div class="diff-card diff-baja">
           <div class="d-val">{{ dist_dificultad['Bajo'] }}</div>
           <div class="d-label">Baja</div>
@@ -270,84 +251,90 @@ body, html body, body .page, body main, body main .content, body article.content
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- MATRIZ DE CONCORDANCIA -->
-  <div class="dash-card">
-    <div class="card-title-d">Matriz de concordancia IA-Médico</div>
-    <div class="card-sub-d">Cuatro cuadrantes según si la IA acertó el diagnóstico y si el médico calificó alto o bajo - cada celda muestra el % de casos en ese cuadrante</div>
-    <div class="matrix-grid">
-      {% set q1 = ((total_correct / total_graded * 100) if total_graded > 0 else 0) %}
-      {% set q2 = ((total_partial / 2 / total_graded * 100) if total_graded > 0 else 0) %}
-      {% set q3 = ((total_partial / 2 / total_graded * 100) if total_graded > 0 else 0) %}
-      {% set q4 = ((total_incorrect / total_graded * 100) if total_graded > 0 else 0) %}
-      
-      <div class="matrix-cell m-green">
-        <div class="m-pct">{{ "%.1f"|format(q1) }}%</div>
-        <div class="m-label">IA acierta · Médico califica alto</div>
+    <div class="dash-card">
+      <div class="card-title-d">Veracidad promedio por nivel de dificultad</div>
+      <div class="card-sub-d">Media de calificaciones clínicas de todos los modelos combinados (1 a 5 ★)</div>
+      {% if total_graded > 0 %}
+      <div class="chart-wrap" style="height:320px;"><canvas id="chartDiff"></canvas></div>
+      {% else %}
+      <div class="empty-state-wrap" style="height:320px;">
+        <i class="bi bi-bar-chart-fill empty-icon"></i>
+        <div class="empty-title">Sin datos por nivel de dificultad</div>
       </div>
-      <div class="matrix-cell m-amber">
-        <div class="m-pct">{{ "%.1f"|format(q2) }}%</div>
-        <div class="m-label">IA acierta · Médico califica bajo</div>
-      </div>
-      <div class="matrix-cell m-brown">
-        <div class="m-pct">{{ "%.1f"|format(q3) }}%</div>
-        <div class="m-label">IA falla · Médico califica alto</div>
-      </div>
-      <div class="matrix-cell m-red">
-        <div class="m-pct">{{ "%.1f"|format(q4) }}%</div>
-        <div class="m-label">IA falla · Médico califica bajo</div>
-      </div>
+      {% endif %}
     </div>
   </div>
 
-  <!-- RADAR CHART Y DIFICULTAD BAR CHART -->
+  <!-- 3. MATRIZ Y ESPECIALIDADES -->
   <div class="two-col">
+    <!-- MATRIZ DE CONCORDANCIA -->
     <div class="dash-card">
-      <div class="card-title-d">Perfil comparativo multidimensional</div>
-      <div class="card-sub-d">Veracidad · precisión global · rendimiento por dificultad · selecciona modelos para comparar</div>
-      {% if total_graded > 0 %}
-      <div style="position:relative; height:350px; width:100%; display:flex; justify-content:center;">
-        <canvas id="chartRadar"></canvas>
+      <div class="card-title-d">Matriz de distribución de calidad clínica</div>
+      <div class="card-sub-d">Distribución de las evaluaciones médicas sobre la calidad diagnóstica de las IAs</div>
+      <div class="matrix-grid">
+        {% set q1 = ((total_correct / total_graded * 100) if total_graded > 0 else 0) %}
+        {% set q2 = ((total_partial / 2 / total_graded * 100) if total_graded > 0 else 0) %}
+        {% set q3 = ((total_partial / 2 / total_graded * 100) if total_graded > 0 else 0) %}
+        {% set q4 = ((total_incorrect / total_graded * 100) if total_graded > 0 else 0) %}
+        
+        <div class="matrix-cell m-green">
+          <div class="m-pct">{{ "%.1f"|format(q1) }}%</div>
+          <div class="m-label">Veracidad Alta (4 a 5 ★)</div>
+        </div>
+        <div class="matrix-cell m-amber">
+          <div class="m-pct">{{ "%.1f"|format(q2) }}%</div>
+          <div class="m-label">Veracidad Media-Alta (3.5 a 4 ★)</div>
+        </div>
+        <div class="matrix-cell m-brown">
+          <div class="m-pct">{{ "%.1f"|format(q3) }}%</div>
+          <div class="m-label">Veracidad Aceptable (3 ★)</div>
+        </div>
+        <div class="matrix-cell m-red">
+          <div class="m-pct">{{ "%.1f"|format(q4) }}%</div>
+          <div class="m-label">Veracidad Crítica (1 a 2 ★)</div>
+        </div>
       </div>
-      {% else %}
-      <div class="empty-state-wrap" style="height:350px;">
-        <i class="bi bi-hexagon empty-icon"></i>
-        <div class="empty-title">Perfil multidimensional en espera</div>
-      </div>
-      {% endif %}
     </div>
 
+    <!-- ESPECIALIDADES CLÍNICAS -->
     <div class="dash-card">
-      <div class="card-title-d">Precisión diagnóstica promedio por dificultad</div>
-      <div class="card-sub-d">Media de todos los modelos · % de coincidencia con diagnóstico humano</div>
-      {% if total_graded > 0 %}
-      <div class="chart-wrap" style="height:350px;"><canvas id="chartDiff"></canvas></div>
+      <div class="card-title-d">Casos por especialidad clínica</div>
+      <div class="card-sub-d">Distribución estructural de las especialidades médicas representadas en el benchmark</div>
+      {% if especialidades %}
+      <div class="esp-grid">
+        {% for esp_nombre, esp_count in especialidades %}
+        <div class="esp-row">
+          <span class="esp-nombre" title="{{ esp_nombre }}">{{ esp_nombre }}</span>
+          <div class="esp-bar-bg"><div class="esp-bar-fill" style="width:{{ [esp_count / max_esp_count * 100, 100]|min }}%;"></div></div>
+          <span class="esp-count">{{ esp_count }}</span>
+        </div>
+        {% endfor %}
+      </div>
       {% else %}
-      <div class="empty-state-wrap" style="height:350px;">
-        <i class="bi bi-bar-chart-line empty-icon"></i>
-        <div class="empty-title">Sin datos de dificultad</div>
+      <div class="empty-state-wrap" style="min-height: 120px; padding: 1.5rem; margin-top: 1rem;">
+        <i class="bi bi-tag empty-icon" style="font-size: 1.8rem;"></i>
+        <div class="empty-desc">No se han detectado asociaciones activas de especialidades.</div>
       </div>
       {% endif %}
     </div>
   </div>
 
-  <!-- TABLA DE RENDIMIENTO -->
+  <!-- 4. TABLA DE RENDIMIENTO -->
   <div class="dash-card">
-    <div class="card-title-d">Tabla de rendimiento completa</div>
-    <div class="card-sub-d">Ordenada por precisión diagnóstica global · desglose por nivel de dificultad y Veracidad</div>
-    <div style="overflow-x:auto; margin-top:1rem;">
+    <div class="card-title-d">Tabla de rendimiento clínico completa</div>
+    <div class="card-sub-d">Ordenada por la calificación media de veracidad diagnóstica · desglose completo por nivel de dificultad</div>
+    <div style="overflow-x:auto; margin-top:1.25rem;">
       <table class="perf-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Modelo</th>
-            <th>Mejor en</th>
-            <th>Bajo</th>
-            <th>Medio</th>
-            <th>Alto</th>
-            <th>Precisión diagnóstico</th>
-            <th>Veracidad (★)</th>
+            <th>Modelo Evaluado</th>
+            <th>Mejor Desempeño</th>
+            <th>Dificultad Baja</th>
+            <th>Dificultad Media</th>
+            <th>Dificultad Alta</th>
+            <th>Veracidad General</th>
           </tr>
         </thead>
         <tbody>
@@ -362,18 +349,12 @@ body, html body, body .page, body main, body main .content, body article.content
               {% if m.graded_count > 0 %}
               <span class="badge-dif badge-{{ m.mejor_en|lower }}">{{ m.mejor_en }}</span>
               {% else %}
-              <span class="badge-dif" style="background: var(--surf3); color: var(--ts);">Pendiente</span>
+              <span class="badge-dif" style="background: var(--surf3); color: var(--ts); box-shadow: none;">Pendiente</span>
               {% endif %}
             </td>
-            <td class="td-pct">{% if m.graded_count > 0 %}{{ m.bajo }}%{% else %}-{% endif %}</td>
-            <td class="td-pct">{% if m.graded_count > 0 %}{{ m.medio }}%{% else %}-{% endif %}</td>
-            <td class="td-pct">{% if m.graded_count > 0 %}{{ m.alto }}%{% else %}-{% endif %}</td>
-            <td>
-              <div class="prec-bar-wrap">
-                <div class="prec-bar-bg"><div class="prec-bar-fill" style="width:{{ m.global }}%;"></div></div>
-                <span class="prec-pct-val">{% if m.graded_count > 0 %}{{ m.global }}%{% else %}0.0%{% endif %}</span>
-              </div>
-            </td>
+            <td class="td-pct">{% if m.graded_count > 0 %}{{ "%.2f"|format(m.bajo) }} ★{% else %}-{% endif %}</td>
+            <td class="td-pct">{% if m.graded_count > 0 %}{{ "%.2f"|format(m.medio) }} ★{% else %}-{% endif %}</td>
+            <td class="td-pct">{% if m.graded_count > 0 %}{{ "%.2f"|format(m.alto) }} ★{% else %}-{% endif %}</td>
             <td class="stars-cell">
               {% if m.graded_count > 0 %}
                 {% for _ in range(m.stars_full) %}<i class="bi bi-star-fill star-fill"></i>{% endfor %}
@@ -391,49 +372,27 @@ body, html body, body .page, body main, body main .content, body article.content
     </div>
   </div>
 
-  <!-- ESPECIALIDADES CLÍNICAS -->
-  <div class="dash-card">
-    <div class="card-title-d">Casos por especialidad clínica</div>
-    <div class="card-sub-d">Distribución del dataset · un caso puede pertenecer a varias especialidades</div>
-    {% if especialidades %}
-    <div class="esp-grid">
-      {% for esp_nombre, esp_count in especialidades %}
-      <div class="esp-row">
-        <span class="esp-nombre" title="{{ esp_nombre }}">{{ esp_nombre }}</span>
-        <div class="esp-bar-bg"><div class="esp-bar-fill" style="width:{{ [esp_count / max_esp_count * 100, 100]|min }}%;"></div></div>
-        <span class="esp-count">{{ esp_count }}</span>
-      </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state-wrap" style="min-height: 120px; padding: 1.5rem; margin-top: 1rem;">
-      <i class="bi bi-tag empty-icon" style="font-size: 1.8rem;"></i>
-      <div class="empty-desc">No se han detectado asociaciones activas de especialidades.</div>
-    </div>
-    {% endif %}
-  </div>
-
-  <!-- FOOTER KPIs -->
+  <!-- 5. FOOTER KPIs -->
   <div class="footer-kpis">
     <div class="fkpi">
-      <div class="fkpi-label">Mejor Veracidad y precisión</div>
+      <div class="fkpi-label">Mejor Modelo (Veracidad)</div>
       <div class="fkpi-model">{% if mejor_ver_modelo != "Pendiente" %}{{ mejor_ver_modelo }}{% else %}Pendiente{% endif %}</div>
-      <div class="fkpi-sub">{% if mejor_ver_modelo != "Pendiente" %}{{ "%.2f"|format(mejor_ver_val) }} ★ · {{ mejor_ver_precision }}%{% else %}0.00 ★ · 0.0%{% endif %}</div>
+      <div class="fkpi-sub">{% if mejor_ver_modelo != "Pendiente" %}{{ "%.2f"|format(mejor_ver_val) }} ★ Promedio{% else %}0.00 ★{% endif %}</div>
     </div>
     <div class="fkpi">
-      <div class="fkpi-label">Modelo más consistente</div>
+      <div class="fkpi-label">Modelo Más Consistente en Alta</div>
       <div class="fkpi-model">{% if mejor_prec_alto_modelo != "Pendiente" %}{{ mejor_prec_alto_modelo }}{% else %}Pendiente{% endif %}</div>
-      <div class="fkpi-sub">Menor variación entre niveles</div>
+      <div class="fkpi-sub">{% if mejor_prec_alto_modelo != "Pendiente" %}{{ "%.2f"|format(mejor_prec_alto_val) }} ★ en Casos Complejos{% else %}0.00 ★{% endif %}</div>
     </div>
     <div class="fkpi">
-      <div class="fkpi-label">Mayor discrepancia IA-Médico</div>
+      <div class="fkpi-label">Dificultad con Mayor Desafío</div>
       <div class="fkpi-model">{% if mayor_reto_label != "Pendiente" %}{{ mayor_reto_label }}{% else %}Pendiente{% endif %}</div>
-      <div class="fkpi-sub">Médico subestima su acierto</div>
+      <div class="fkpi-sub">{% if mayor_reto_label != "Pendiente" %}Calificación media: {{ "%.2f"|format(mayor_reto_val) }} ★{% else %}0.00 ★{% endif %}</div>
     </div>
     <div class="fkpi">
-      <div class="fkpi-label">Especialidades más evaluadas</div>
+      <div class="fkpi-label">Especialidad Principal</div>
       <div class="fkpi-model">{{ esp_mas_frecuente }}</div>
-      <div class="fkpi-sub">{{ esp_mas_freq_count }} casos registrados</div>
+      <div class="fkpi-sub">{{ esp_mas_freq_count }} casos representados</div>
     </div>
   </div>
 
@@ -442,50 +401,30 @@ body, html body, body .page, body main, body main .content, body article.content
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.font.family = "'Outfit', sans-serif";
   Chart.defaults.color = '#94a3b8';
-  const GRID  = 'rgba(66, 74, 89, 0.4)';
-  const TIP = { backgroundColor: '#232730', borderColor: '#424a59', borderWidth: 1, padding: 12, cornerRadius: 8 };
+  const GRID  = 'rgba(255, 255, 255, 0.08)';
+  const TIP = { 
+    backgroundColor: '#0f172a', 
+    borderColor: '#6366f1', 
+    borderWidth: 1, 
+    padding: 12, 
+    cornerRadius: 8,
+    titleFont: { size: 13, weight: 'bold' },
+    bodyFont: { size: 12 }
+  };
 
-  // Paleta de colores variada y viva
+  // Paleta de colores ultra-vivos de alta gama
   const COLORS = [
-    '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
-    '#ec4899', '#06b6d4', '#84cc16', '#f43f5e', '#6366f1'
+    '#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', 
+    '#ec4899', '#06b6d4', '#84cc16', '#ef4444', '#14b8a6'
   ];
 
   const modelsData = {{ tabla_modelos | tojson | safe }};
-  // Modelos con diagnósticos (para gráfico de precisión textual)
-  const diagModels = modelsData.filter(m => m.diag_count > 0);
-  // Modelos con calificaciones del médico (para gráfico de veracidad)
   const activeModels = modelsData.filter(m => m.graded_count > 0);
   
-  /* ── 1. TOP PRECISIÓN TEXTUAL (VERTICAL BAR — independiente de calificación) ── */
-  if (document.getElementById('chartTopPrecision')) {
-    const byPrec = [...diagModels].sort((a,b) => b.global - a.global);
-    new Chart(document.getElementById('chartTopPrecision'), {
-      type: 'bar',
-      data: {
-        labels: byPrec.map(m => m.corto),
-        datasets: [{
-          data: byPrec.map(m => m.global),
-          backgroundColor: byPrec.map((m,i) => COLORS[i % COLORS.length]),
-          borderRadius: 4,
-          barPercentage: 0.6
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Precisión: ${c.parsed.y}%` } } },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 500 } } },
-          y: { beginAtZero: true, max: 100, grid: { color: GRID }, ticks: { callback: v => v + '%' } }
-        }
-      }
-    });
-  }
-
   {% if total_graded > 0 %}
-  /* ── 2. TOP VERACIDAD (VERTICAL BAR — depende de calificaciones) ── */
+  /* ── 1. TOP VERACIDAD (VERTICAL BAR — FULL WIDTH) ── */
   if (document.getElementById('chartTopVeracidad')) {
     const byVer = [...activeModels].sort((a,b) => b.veracidad - a.veracidad);
     new Chart(document.getElementById('chartTopVeracidad'), {
@@ -495,50 +434,23 @@ document.addEventListener('DOMContentLoaded', function () {
         datasets: [{
           data: byVer.map(m => m.veracidad),
           backgroundColor: byVer.map((m,i) => COLORS[i % COLORS.length]),
-          borderRadius: 4,
-          barPercentage: 0.6
+          borderRadius: 8,
+          barPercentage: 0.45
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Veracidad: ${c.parsed.y} ★` } } },
         scales: {
-          x: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 500 } } },
-          y: { beginAtZero: true, min: 1, max: 5, grid: { color: GRID }, ticks: { callback: v => v + ' ★' } }
-        }
-      }
-    });
-  }
-
-  /* ── 3. SCATTER CHART (VERACIDAD VS PRECISIÓN) ── */
-  if (document.getElementById('chartScatter')) {
-    new Chart(document.getElementById('chartScatter'), {
-      type: 'scatter',
-      data: {
-        datasets: activeModels.map((m, i) => ({
-          label: m.corto,
-          data: [{ x: m.global, y: m.veracidad }],
-          backgroundColor: COLORS[i % COLORS.length],
-          pointRadius: 10,
-          pointHoverRadius: 14,
-        }))
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 10, padding: 15, color: '#e2e8f0', font: {size:11} } },
-          tooltip: { ...TIP, callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.x}% - ${c.parsed.y} ★` } }
-        },
-        scales: {
-          x: { title: { display: true, text: 'Precisión diagnóstica (%)', color: '#94a3b8' }, grid: { color: GRID }, ticks: { callback: v => v + '%' } },
-          y: { title: { display: true, text: 'Veracidad (★)', color: '#94a3b8' }, grid: { color: GRID }, ticks: { callback: v => v + ' ★' } }
+          x: { grid: { display: false }, ticks: { color: '#f8fafc', font: { size: 12, weight: 600 } } },
+          y: { beginAtZero: true, min: 0, max: 5, grid: { color: GRID }, ticks: { color: '#94a3b8', callback: v => v + ' ★' } }
         }
       }
     });
   }
   {% endif %}
 
-  /* ── 4. DOUGHNUT CHART (DISTRIBUCIÓN DIFICULTAD) ── */
+  /* ── 2. DOUGHNUT CHART (DISTRIBUCIÓN DIFICULTAD) ── */
   if (document.getElementById('chartDoughnut')) {
     const dVals = [{{ dist_dificultad['Bajo'] }}, {{ dist_dificultad['Medio'] }}, {{ dist_dificultad['Alto'] }}];
     if (dVals.some(v => v > 0)) {
@@ -550,11 +462,11 @@ document.addEventListener('DOMContentLoaded', function () {
             data: dVals,
             backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
             borderWidth: 0,
-            hoverOffset: 4
+            hoverOffset: 6
           }]
         },
         options: {
-          responsive: true, maintainAspectRatio: false, cutout: '65%',
+          responsive: true, maintainAspectRatio: false, cutout: '70%',
           plugins: { legend: { display: false }, tooltip: TIP }
         }
       });
@@ -562,48 +474,24 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   {% if total_graded > 0 %}
-  /* ── 5. RADAR CHART ── */
-  if (document.getElementById('chartRadar') && activeModels.length > 0) {
-    const radarModels = activeModels.slice(0, 5); // Max 5 para no saturar
-    new Chart(document.getElementById('chartRadar'), {
-      type: 'radar',
-      data: {
-        labels: ['Veracidad', 'Precisión global', 'Dif. Baja', 'Dif. Media', 'Dif. Alta'],
-        datasets: radarModels.map((m, i) => ({
-          label: m.corto,
-          data: [ (m.veracidad / 5) * 100, m.global, m.bajo, m.medio, m.alto ],
-          borderColor: COLORS[i % COLORS.length],
-          backgroundColor: COLORS[i % COLORS.length] + '33', // 20% opacity
-          pointBackgroundColor: COLORS[i % COLORS.length],
-          borderWidth: 2,
-        }))
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: { r: { angleLines: { color: GRID }, grid: { color: GRID }, pointLabels: { color: '#e2e8f0', font: { size: 12, weight: 600 } }, ticks: { display: false, min: 0, max: 100 } } },
-        plugins: { legend: { position: 'top', labels: { color: '#e2e8f0', font: { size: 12 } } }, tooltip: TIP }
-      }
-    });
-  }
-
-  /* ── 6. BAR CHART DIFICULTAD ── */
+  /* ── 3. BAR CHART DIFICULTAD ── */
   if (document.getElementById('chartDiff')) {
     new Chart(document.getElementById('chartDiff'), {
       type: 'bar',
       data: {
         labels: ['Baja', 'Media', 'Alta'],
         datasets: [{
-          data: [{{ prec_avg_diff.get('Bajo', 0) }}, {{ prec_avg_diff.get('Medio', 0) }}, {{ prec_avg_diff.get('Alto', 0) }}],
+          data: [{{ ver_avg_diff.get('Bajo', 0) }}, {{ ver_avg_diff.get('Medio', 0) }}, {{ ver_avg_diff.get('Alto', 0) }}],
           backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-          borderRadius: 4, barPercentage: 0.5
+          borderRadius: 6, barPercentage: 0.4
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Precisión: ${c.parsed.y}%` } } },
+        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Veracidad: ${c.parsed.y} ★` } } },
         scales: {
-          x: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 600 } } },
-          y: { beginAtZero: true, max: 100, grid: { color: GRID }, ticks: { callback: v => v + '%' } }
+          x: { grid: { display: false }, ticks: { color: '#f8fafc', font: { size: 12, weight: 600 } } },
+          y: { beginAtZero: true, min: 0, max: 5, grid: { color: GRID }, ticks: { color: '#94a3b8', callback: v => v + ' ★' } }
         }
       }
     });
