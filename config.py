@@ -10,7 +10,7 @@ load_dotenv()
 
 # URL base de la API REST que consume este frontend. Debe ser el
 # servicio PostgreSQL genérico al que está conectado.
-API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:5034")
+API_BASE_URL = os.getenv("API_BASE_URL", "http://sieva-frontend.runasp.net")
 
 # Clave secreta para el manejo de sesiones y mensajes flash.
 SECRET_KEY = os.getenv("SECRET_KEY", "clave-secreta-flask-frontend-2024")
