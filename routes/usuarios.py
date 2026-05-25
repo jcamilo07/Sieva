@@ -19,6 +19,11 @@ def index():
     valor_clave = request.args.get('clave', '')
 
     registros = api.listar(TABLA, limite)
+    if registros:
+        for reg in registros:
+            if 'password_hash' in reg:
+                reg['password_hash'] = None
+
     roles_todos = api.listar('roles')
     usuario_roles = api.listar('usuario_rol')
 
