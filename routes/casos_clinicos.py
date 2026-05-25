@@ -430,30 +430,38 @@ def guardar_calificacion():
             errores.append(f'Observación: {msg_obs}')
 
     # ── 2. Guardar puntaje en puntajes_casos (BD PostgreSQL) ───────────────
-    if calificacion is not None:
-        from flask import session
-        
-        # Intentar obtener el ID del médico experto logueado
-        email_usuario = session.get('usuario')
-        medico_id = 1  # Fallback por defecto (Juan Blanquiceth)
-        if email_usuario:
-            medicos = api.listar(f'medico_experto/email/{email_usuario}')
-            if medicos and isinstance(medicos, list) and len(medicos) > 0:
-                medico_id = medicos[0].get('id', 1)
-        
-        # Obtener el modelo_id asociado a este caso clínico
-        modelo_id = 1  # Fallback por defecto
-        caso_list = api.listar(f'casos_clinicos/id/{caso_id}')
-        if caso_list and isinstance(caso_list, list) and len(caso_list) > 0:
-            modelo_id = caso_list[0].get('modelo_id', 1)
-            
-        criterio_id = 1  # Veracidad (criterio por defecto)
+    if 'calificacion' in datos:
+        calificacion = datos['calificacion']
         
         existentes = api.listar(f'puntajes_casos/caso_id/{caso_id}')
+        reg_id = None
         if existentes and isinstance(existentes, list) and len(existentes) > 0:
-            # Si ya existe, actualizamos el puntaje
             reg = existentes[0] if isinstance(existentes[0], dict) else {}
             reg_id = reg.get('id')
+
+        if calificacion is None or calificacion == 0:
+            # Deselección: Eliminar el registro si existe
+            if reg_id:
+                exito_punt, msg_punt = api.eliminar('puntajes_casos', 'id', reg_id)
+                if not exito_punt:
+                    errores.append(f'Puntaje BD (Eliminar): {msg_punt}')
+        else:
+            # Guardar o actualizar
+            from flask import session
+            email_usuario = session.get('usuario')
+            medico_id = 1
+            if email_usuario:
+                medicos = api.listar(f'medico_experto/email/{email_usuario}')
+                if medicos and isinstance(medicos, list) and len(medicos) > 0:
+                    medico_id = medicos[0].get('id', 1)
+            
+            modelo_id = 1
+            caso_list = api.listar(f'casos_clinicos/id/{caso_id}')
+            if caso_list and isinstance(caso_list, list) and len(caso_list) > 0:
+                modelo_id = caso_list[0].get('modelo_id', 1)
+                
+            criterio_id = 1
+            
             if reg_id:
                 exito_punt, msg_punt = api.actualizar(
                     'puntajes_casos', 'id', reg_id,
@@ -461,18 +469,17 @@ def guardar_calificacion():
                 )
                 if not exito_punt:
                     errores.append(f'Puntaje BD (Actualizar): {msg_punt}')
-        else:
-            # Si no existe, creamos un nuevo registro
-            nuevo_puntaje = {
-                'modelo_id': int(modelo_id),
-                'caso_id': int(caso_id),
-                'criterio_id': int(criterio_id),
-                'medico_experto_id': int(medico_id),
-                'puntaje': int(calificacion)
-            }
-            exito_punt, msg_punt = api.crear('puntajes_casos', nuevo_puntaje)
-            if not exito_punt:
-                errores.append(f'Puntaje BD (Crear): {msg_punt}')
+            else:
+                nuevo_puntaje = {
+                    'modelo_id': int(modelo_id),
+                    'caso_id': int(caso_id),
+                    'criterio_id': int(criterio_id),
+                    'medico_experto_id': int(medico_id),
+                    'puntaje': int(calificacion)
+                }
+                exito_punt, msg_punt = api.crear('puntajes_casos', nuevo_puntaje)
+                if not exito_punt:
+                    errores.append(f'Puntaje BD (Crear): {msg_punt}')
 
     # ── 3. Actualizar caché SQLite local (muestra inmediata en UI) ─────────
     try:
@@ -480,19 +487,23 @@ def guardar_calificacion():
         c = conn.cursor()
         c.execute('SELECT id FROM local_casos_clinicos WHERE id = ?', (caso_id,))
         existe = c.fetchone()
+        
+        # Preparar variables para query (usamos explícitamente None para nulos en BD local)
+        val_calif = calificacion if 'calificacion' in datos and calificacion not in [0, None] else None
+        
         if existe:
-            if calificacion is not None and observacion is not None:
+            if 'calificacion' in datos and 'observacion' in datos:
                 c.execute('UPDATE local_casos_clinicos SET calificacion_ia = ?, observacion = ? WHERE id = ?',
-                          (calificacion, observacion, caso_id))
-            elif calificacion is not None:
+                          (val_calif, observacion, caso_id))
+            elif 'calificacion' in datos:
                 c.execute('UPDATE local_casos_clinicos SET calificacion_ia = ? WHERE id = ?',
-                          (calificacion, caso_id))
-            elif observacion is not None:
+                          (val_calif, caso_id))
+            elif 'observacion' in datos:
                 c.execute('UPDATE local_casos_clinicos SET observacion = ? WHERE id = ?',
                           (observacion, caso_id))
         else:
             c.execute('INSERT INTO local_casos_clinicos (id, calificacion_ia, observacion) VALUES (?, ?, ?)',
-                      (caso_id, calificacion or 0, observacion or ''))
+                      (caso_id, val_calif, observacion or ''))
         conn.commit()
         conn.close()
     except Exception as ex_local:
