@@ -31,65 +31,39 @@ body, html body, body .page, body main, body main .content, body article.content
   --amber:        #c28c46;
   --red:          #c25c56;
   --brown:        #94653b;
+  --purple:       #8854d0;
+  --pink:         #e84393;
+  --gray:         #636e72;
   
   --rcard:        12px;
   --rsm:          8px;
 }
 
 /* ══ DASH ROOT ══ */
-.dash-root {
-  max-width: 1380px;
-  margin: 0 auto;
-  padding: 0 1.25rem 3rem;
-}
+.dash-root { max-width: 1380px; margin: 0 auto; padding: 0 1.25rem 3rem; }
 
 /* ══ 1. HEADER CRITERIO ══ */
 .criterio-header {
   background: linear-gradient(90deg, #202b42, #243250 60%, #1e273a) !important;
-  border-bottom: 1px solid #32446a;
-  padding: .85rem 1.5rem;
-  display: flex !important;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-  border-radius: var(--rsm);
+  border-bottom: 1px solid #32446a; padding: .85rem 1.5rem; display: flex !important;
+  align-items: center; gap: 1rem; margin-bottom: 1.25rem; border-radius: var(--rsm);
 }
-.criterio-badge {
-  background: #39528f;
-  color: #fff;
-  font-size: .72rem;
-  font-weight: 700;
-  padding: .28rem .7rem;
-  border-radius: 4px;
-  letter-spacing: .05em;
-  white-space: nowrap;
-}
+.criterio-badge { background: #39528f; color: #fff; font-size: .72rem; font-weight: 700; padding: .28rem .7rem; border-radius: 4px; letter-spacing: .05em; white-space: nowrap; }
 .criterio-title { font-size:1.05rem; font-weight:700; color:#f8fafc; white-space:nowrap; }
 .criterio-sep   { color:#4a6abf; }
 .criterio-desc  { font-size:.88rem; color:#cbd5e1; }
 
 /* ══ PROGRESO Y EMPTY STATE ══ */
 .progress-banner {
-  background: rgba(35, 39, 48, 0.8) !important;
-  border: 1px solid var(--bd) !important;
-  border-radius: var(--rcard) !important;
-  padding: 1rem 1.25rem !important;
-  margin-bottom: 1.25rem;
+  background: rgba(35, 39, 48, 0.8) !important; border: 1px solid var(--bd) !important;
+  border-radius: var(--rcard) !important; padding: 1rem 1.25rem !important; margin-bottom: 1.25rem;
 }
-.progress-header {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;
-}
-.progress-title {
-  font-size: 0.88rem; font-weight: 700; color: var(--tp); display: flex; align-items: center; gap: 0.5rem;
-}
+.progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+.progress-title { font-size: 0.88rem; font-weight: 700; color: var(--tp); display: flex; align-items: center; gap: 0.5rem; }
 .progress-title i { color: var(--blue); font-size: 1.05rem; }
 .progress-pct { font-size: 1rem; font-weight: 800; color: var(--blue); }
-.progress-bar-container {
-  width: 100%; height: 6px; background: var(--surf3); border-radius: 3px; overflow: hidden; margin-bottom: 0.6rem;
-}
-.progress-bar-fill {
-  height: 100%; background: linear-gradient(90deg, var(--blue), var(--green)) !important; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
+.progress-bar-container { width: 100%; height: 6px; background: var(--surf3); border-radius: 3px; overflow: hidden; margin-bottom: 0.6rem; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--green)) !important; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 .progress-disclaimer { font-size: 0.74rem; color: var(--ts); line-height: 1.4; }
 .progress-disclaimer strong { color: var(--tp); }
 
@@ -104,43 +78,41 @@ body, html body, body .page, body main, body main .content, body article.content
 
 /* ══ DASH-CARD BASE ══ */
 .dash-card {
-  background: var(--surf1) !important;
-  border: 1px solid var(--bd) !important;
-  border-radius: var(--rcard) !important;
-  padding: 1.5rem !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
-  margin-bottom: 1.25rem;
+  background: var(--surf1) !important; border: 1px solid var(--bd) !important;
+  border-radius: var(--rcard) !important; padding: 1.5rem !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important; margin-bottom: 1.25rem;
 }
 .card-title-d { font-size:1.05rem; font-weight:800; color:var(--tp); margin-bottom:.3rem; letter-spacing:-0.02em; }
 .card-sub-d   { font-size:.82rem; color:var(--ts); margin-bottom:1.25rem; line-height:1.5; font-weight:400; }
 
+/* ══ TWO-COL GRID ══ */
+.two-col { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1.25rem; margin-bottom: 1.25rem; }
+.chart-wrap { position:relative; height:300px; width:100%; }
+
+/* ══ TARJETAS DE DIFICULTAD DOUGHNUT ══ */
+.diff-card { flex: 1; text-align: center; padding: 0.8rem 0.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+.diff-baja { background: rgba(78, 154, 102, 0.15); border-color: rgba(78, 154, 102, 0.3); }
+.diff-baja .d-val { color: #72b887; }
+.diff-media { background: rgba(194, 140, 70, 0.15); border-color: rgba(194, 140, 70, 0.3); }
+.diff-media .d-val { color: #d6a461; }
+.diff-alta { background: rgba(194, 92, 86, 0.15); border-color: rgba(194, 92, 86, 0.3); }
+.diff-alta .d-val { color: #d6716b; }
+.d-val { font-size: 1.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.2rem; }
+.d-label { font-size: 0.85rem; font-weight: 700; color: var(--tp); }
+.d-pct { font-size: 0.75rem; color: var(--ts); }
+
 /* ══ MATRIZ CUADRANTES ══ */
-.matrix-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-}
+.matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 .matrix-cell {
-  border-radius: var(--rsm);
-  padding: 2rem 1.5rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  border-radius: var(--rsm); padding: 2rem 1.5rem; text-align: center; display: flex;
+  flex-direction: column; justify-content: center; align-items: center; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 .m-pct { font-size: 2.4rem; font-weight: 800; line-height: 1; margin-bottom: 0.5rem; }
 .m-label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em; }
-
 .m-green { background: rgba(39, 110, 58, 0.25); color: #8cd6a3; }
 .m-amber { background: rgba(158, 108, 40, 0.25); color: #e6b771; }
 .m-brown { background: rgba(117, 74, 35, 0.25); color: #d6985e; }
 .m-red   { background: rgba(148, 56, 56, 0.25); color: #e88d89; }
-
-/* ══ TWO-COL GRID ══ */
-.two-col { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 1.25rem; margin-bottom: 1.25rem; }
-.chart-wrap { position:relative; height:300px; width:100%; }
 
 /* ══ TABLA ══ */
 .perf-table { width:100%; border-collapse:collapse; font-size:.85rem; background:transparent !important; }
@@ -187,20 +159,11 @@ body, html body, body .page, body main, body main .content, body article.content
 }
 .fkpi { display:flex; flex-direction:column; gap:.35rem; }
 .fkpi-label { font-size:.75rem; color:var(--ts); display:flex; align-items:center; gap:.4rem; font-weight:500; }
-.fkpi-label i { font-size:.9rem; }
 .fkpi-model { font-size:1.1rem; font-weight:800; color:var(--tp); letter-spacing:-0.02em; }
 .fkpi-sub { font-size:.78rem; color:var(--tm); }
 
-@media (max-width:1100px) {
-  .two-col { grid-template-columns: 1fr !important; }
-  .esp-grid { grid-template-columns: repeat(2,1fr) !important; }
-  .footer-kpis { grid-template-columns: repeat(2,1fr) !important; }
-}
-@media (max-width:700px) {
-  .matrix-grid { grid-template-columns: 1fr !important; }
-  .esp-grid { grid-template-columns: 1fr !important; }
-  .footer-kpis { grid-template-columns: 1fr !important; }
-}
+@media (max-width:1100px) { .two-col { grid-template-columns: 1fr !important; } .esp-grid { grid-template-columns: repeat(2,1fr) !important; } .footer-kpis { grid-template-columns: repeat(2,1fr) !important; } }
+@media (max-width:700px) { .matrix-grid { grid-template-columns: 1fr !important; } .esp-grid { grid-template-columns: 1fr !important; } .footer-kpis { grid-template-columns: 1fr !important; } }
 </style>
 {% endblock %}
 
@@ -239,6 +202,76 @@ body, html body, body .page, body main, body main .content, body article.content
   </div>
   {% endif %}
 
+  <!-- TOP CHARTS (PRECISIÓN Y VERACIDAD HORIZONTALES) -->
+  <div class="two-col">
+    <div class="dash-card">
+      <div class="card-title-d">Top — precisión diagnóstica por modelo</div>
+      <div class="card-sub-d">% de coincidencia entre diagnóstico IA y diagnóstico humano</div>
+      {% if total_graded > 0 %}
+      <div class="chart-wrap" style="height:350px;"><canvas id="chartTopPrecision"></canvas></div>
+      {% else %}
+      <div class="empty-state-wrap" style="height:350px;">
+        <i class="bi bi-bar-chart-line empty-icon"></i>
+        <div class="empty-title">Sin datos de precisión</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="dash-card">
+      <div class="card-title-d">Top — Veracidad por modelo</div>
+      <div class="card-sub-d">Calificación media del médico evaluador · criterio Veracidad (1-5)</div>
+      {% if total_graded > 0 %}
+      <div class="chart-wrap" style="height:350px;"><canvas id="chartTopVeracidad"></canvas></div>
+      {% else %}
+      <div class="empty-state-wrap" style="height:350px;">
+        <i class="bi bi-star empty-icon"></i>
+        <div class="empty-title">Sin datos de veracidad</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- SCATTER Y DOUGHNUT -->
+  <div class="two-col">
+    <div class="dash-card">
+      <div class="card-title-d">Veracidad vs. precisión diagnóstica</div>
+      <div class="card-sub-d">Correlación entre calificación médica y acierto objetivo · cada punto = un modelo</div>
+      {% if total_graded > 0 %}
+      <div class="chart-wrap" style="height:320px;"><canvas id="chartScatter"></canvas></div>
+      {% else %}
+      <div class="empty-state-wrap" style="height:320px;">
+        <i class="bi bi-graph-up empty-icon"></i>
+        <div class="empty-title">Gráfico de dispersión en espera</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="dash-card d-flex flex-column">
+      <div class="card-title-d">Distribución de casos por dificultad</div>
+      <div class="card-sub-d">Composición del dataset · {{ total_casos }} diagnósticos generados en total</div>
+      
+      <div class="chart-wrap flex-grow-1" style="height:220px; display:flex; justify-content:center;"><canvas id="chartDoughnut"></canvas></div>
+      
+      <div class="d-flex justify-content-between mt-3 gap-2" style="margin-top:auto;">
+        <div class="diff-card diff-baja">
+          <div class="d-val">{{ dist_dificultad['Bajo'] }}</div>
+          <div class="d-label">Baja</div>
+          <div class="d-pct">{{ dist_dificultad_pct['Bajo'] }}%</div>
+        </div>
+        <div class="diff-card diff-media">
+          <div class="d-val">{{ dist_dificultad['Medio'] }}</div>
+          <div class="d-label">Media</div>
+          <div class="d-pct">{{ dist_dificultad_pct['Medio'] }}%</div>
+        </div>
+        <div class="diff-card diff-alta">
+          <div class="d-val">{{ dist_dificultad['Alto'] }}</div>
+          <div class="d-label">Alta</div>
+          <div class="d-pct">{{ dist_dificultad_pct['Alto'] }}%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MATRIZ DE CONCORDANCIA -->
   <div class="dash-card">
     <div class="card-title-d">Matriz de concordancia IA-Médico</div>
@@ -268,47 +301,32 @@ body, html body, body .page, body main, body main .content, body article.content
     </div>
   </div>
 
-  <!-- RADAR CHART -->
-  <div class="dash-card">
-    <div class="card-title-d">Perfil comparativo multidimensional</div>
-    <div class="card-sub-d">Veracidad · precisión global · rendimiento por dificultad · selecciona modelos para comparar</div>
-    {% if total_graded > 0 %}
-    <div style="position:relative; height:450px; width:100%; display:flex; justify-content:center;">
-      <canvas id="chartRadar"></canvas>
-    </div>
-    {% else %}
-    <div class="empty-state-wrap">
-      <i class="bi bi-hexagon empty-icon"></i>
-      <div class="empty-title">Perfil multidimensional en espera</div>
-      <div class="empty-desc">Comienza a calificar para ver la huella de rendimiento de cada modelo.</div>
-    </div>
-    {% endif %}
-  </div>
-
-  <!-- BAR CHARTS (DIFICULTAD Y ERRORES) -->
+  <!-- RADAR CHART Y DIFICULTAD BAR CHART -->
   <div class="two-col">
     <div class="dash-card">
-      <div class="card-title-d">Precisión diagnóstica promedio por dificultad</div>
-      <div class="card-sub-d">Media de todos los modelos · % de coincidencia con diagnóstico humano</div>
+      <div class="card-title-d">Perfil comparativo multidimensional</div>
+      <div class="card-sub-d">Veracidad · precisión global · rendimiento por dificultad · selecciona modelos para comparar</div>
       {% if total_graded > 0 %}
-      <div class="chart-wrap"><canvas id="chartDiff"></canvas></div>
+      <div style="position:relative; height:350px; width:100%; display:flex; justify-content:center;">
+        <canvas id="chartRadar"></canvas>
+      </div>
       {% else %}
-      <div class="empty-state-wrap">
-        <i class="bi bi-bar-chart-line empty-icon"></i>
-        <div class="empty-title">Sin datos de dificultad</div>
+      <div class="empty-state-wrap" style="height:350px;">
+        <i class="bi bi-hexagon empty-icon"></i>
+        <div class="empty-title">Perfil multidimensional en espera</div>
       </div>
       {% endif %}
     </div>
 
     <div class="dash-card">
-      <div class="card-title-d">Gráfico de errores por modelo</div>
-      <div class="card-sub-d">Cantidad absoluta de diagnósticos incorrectos (calificación 1-2 estrellas)</div>
+      <div class="card-title-d">Precisión diagnóstica promedio por dificultad</div>
+      <div class="card-sub-d">Media de todos los modelos · % de coincidencia con diagnóstico humano</div>
       {% if total_graded > 0 %}
-      <div class="chart-wrap"><canvas id="chartErrors"></canvas></div>
+      <div class="chart-wrap" style="height:350px;"><canvas id="chartDiff"></canvas></div>
       {% else %}
-      <div class="empty-state-wrap">
-        <i class="bi bi-graph-down empty-icon"></i>
-        <div class="empty-title">Sin registro de errores</div>
+      <div class="empty-state-wrap" style="height:350px;">
+        <i class="bi bi-bar-chart-line empty-icon"></i>
+        <div class="empty-title">Sin datos de dificultad</div>
       </div>
       {% endif %}
     </div>
@@ -421,7 +439,6 @@ body, html body, body .page, body main, body main .content, body article.content
 
 </div>
 
-{% if total_graded > 0 %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -430,67 +447,154 @@ document.addEventListener('DOMContentLoaded', function () {
   const GRID  = 'rgba(66, 74, 89, 0.4)';
   const TIP = { backgroundColor: '#232730', borderColor: '#424a59', borderWidth: 1, padding: 12, cornerRadius: 8 };
 
-  const modelsData = {{ tabla_modelos | tojson | safe }};
-  const activeModels = modelsData.filter(m => m.graded_count > 0).slice(0, 5); // Max 5 models for radar readability
-  
+  // Paleta de colores variada y profesional para modelos
   const COLORS = [
-    { border: '#5378c6', bg: 'rgba(83, 120, 198, 0.2)' },
-    { border: '#4e9a66', bg: 'rgba(78, 154, 102, 0.2)' },
-    { border: '#c28c46', bg: 'rgba(194, 140, 70, 0.2)' },
-    { border: '#94653b', bg: 'rgba(148, 101, 59, 0.2)' },
-    { border: '#c25c56', bg: 'rgba(194, 92, 86, 0.2)' }
+    '#5378c6', '#4e9a66', '#c28c46', '#dca54c', '#c25c56', 
+    '#8854d0', '#e84393', '#b33939', '#636e72', '#2c3e50'
   ];
 
-  /* ── RADAR CHART ── */
-  if (document.getElementById('chartRadar') && activeModels.length > 0) {
-    new Chart(document.getElementById('chartRadar'), {
-      type: 'radar',
+  const modelsData = {{ tabla_modelos | tojson | safe }};
+  const activeModels = modelsData.filter(m => m.graded_count > 0);
+  
+  {% if total_graded > 0 %}
+  /* ── 1. TOP PRECISIÓN (HORIZONTAL BAR) ── */
+  if (document.getElementById('chartTopPrecision')) {
+    const byPrec = [...activeModels].sort((a,b) => b.global - a.global);
+    new Chart(document.getElementById('chartTopPrecision'), {
+      type: 'bar',
       data: {
-        labels: ['Veracidad', 'Precisión global', 'Dif. Baja', 'Dif. Media', 'Dif. Alta'],
-        datasets: activeModels.map((m, i) => ({
-          label: m.corto,
-          data: [ (m.veracidad / 5) * 100, m.global, m.bajo, m.medio, m.alto ],
-          borderColor: COLORS[i % COLORS.length].border,
-          backgroundColor: COLORS[i % COLORS.length].bg,
-          pointBackgroundColor: COLORS[i % COLORS.length].border,
-          borderWidth: 2,
-        }))
+        labels: byPrec.map(m => m.corto),
+        datasets: [{
+          data: byPrec.map(m => m.global),
+          backgroundColor: byPrec.map((m,i) => COLORS[i % COLORS.length]),
+          borderRadius: 4,
+          barPercentage: 0.6
+        }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Precisión: ${c.parsed.x}%` } } },
         scales: {
-          r: {
-            angleLines: { color: GRID },
-            grid: { color: GRID },
-            pointLabels: { color: '#e2e8f0', font: { size: 12, weight: 600 } },
-            ticks: { display: false, min: 0, max: 100 }
-          }
-        },
-        plugins: {
-          legend: { position: 'top', labels: { color: '#e2e8f0', font: { size: 12 } } },
-          tooltip: TIP
+          x: { beginAtZero: true, max: 100, grid: { color: GRID }, ticks: { callback: v => v + '%' } },
+          y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 500 } } }
         }
       }
     });
   }
 
-  /* ── BAR CHART DIFICULTAD ── */
+  /* ── 2. TOP VERACIDAD (HORIZONTAL BAR) ── */
+  if (document.getElementById('chartTopVeracidad')) {
+    const byVer = [...activeModels].sort((a,b) => b.veracidad - a.veracidad);
+    new Chart(document.getElementById('chartTopVeracidad'), {
+      type: 'bar',
+      data: {
+        labels: byVer.map(m => m.corto),
+        datasets: [{
+          data: byVer.map(m => m.veracidad),
+          backgroundColor: byVer.map((m,i) => COLORS[i % COLORS.length]),
+          borderRadius: 4,
+          barPercentage: 0.6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Veracidad: ${c.parsed.x} ★` } } },
+        scales: {
+          x: { beginAtZero: true, min: 1, max: 5, grid: { color: GRID }, ticks: { callback: v => v + ' ★' } },
+          y: { grid: { display: false }, ticks: { color: '#e2e8f0', font: { weight: 500 } } }
+        }
+      }
+    });
+  }
+
+  /* ── 3. SCATTER CHART (VERACIDAD VS PRECISIÓN) ── */
+  if (document.getElementById('chartScatter')) {
+    new Chart(document.getElementById('chartScatter'), {
+      type: 'scatter',
+      data: {
+        datasets: activeModels.map((m, i) => ({
+          label: m.corto,
+          data: [{ x: m.global, y: m.veracidad }],
+          backgroundColor: COLORS[i % COLORS.length],
+          pointRadius: 10,
+          pointHoverRadius: 14,
+        }))
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 10, padding: 15, color: '#e2e8f0', font: {size:11} } },
+          tooltip: { ...TIP, callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.x}% - ${c.parsed.y} ★` } }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Precisión diagnóstica (%)', color: '#94a3b8' }, grid: { color: GRID }, ticks: { callback: v => v + '%' } },
+          y: { title: { display: true, text: 'Veracidad (★)', color: '#94a3b8' }, grid: { color: GRID }, ticks: { callback: v => v + ' ★' } }
+        }
+      }
+    });
+  }
+  {% endif %}
+
+  /* ── 4. DOUGHNUT CHART (DISTRIBUCIÓN DIFICULTAD) ── */
+  if (document.getElementById('chartDoughnut')) {
+    const dVals = [{{ dist_dificultad['Bajo'] }}, {{ dist_dificultad['Medio'] }}, {{ dist_dificultad['Alto'] }}];
+    if (dVals.some(v => v > 0)) {
+      new Chart(document.getElementById('chartDoughnut'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Baja', 'Media', 'Alta'],
+          datasets: [{
+            data: dVals,
+            backgroundColor: ['#4e9a66', '#c28c46', '#c25c56'],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '65%',
+          plugins: { legend: { display: false }, tooltip: TIP }
+        }
+      });
+    }
+  }
+
+  {% if total_graded > 0 %}
+  /* ── 5. RADAR CHART ── */
+  if (document.getElementById('chartRadar') && activeModels.length > 0) {
+    const radarModels = activeModels.slice(0, 5); // Max 5 para no saturar
+    new Chart(document.getElementById('chartRadar'), {
+      type: 'radar',
+      data: {
+        labels: ['Veracidad', 'Precisión global', 'Dif. Baja', 'Dif. Media', 'Dif. Alta'],
+        datasets: radarModels.map((m, i) => ({
+          label: m.corto,
+          data: [ (m.veracidad / 5) * 100, m.global, m.bajo, m.medio, m.alto ],
+          borderColor: COLORS[i % COLORS.length],
+          backgroundColor: COLORS[i % COLORS.length] + '33', // 20% opacity
+          pointBackgroundColor: COLORS[i % COLORS.length],
+          borderWidth: 2,
+        }))
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { r: { angleLines: { color: GRID }, grid: { color: GRID }, pointLabels: { color: '#e2e8f0', font: { size: 12, weight: 600 } }, ticks: { display: false, min: 0, max: 100 } } },
+        plugins: { legend: { position: 'top', labels: { color: '#e2e8f0', font: { size: 12 } } }, tooltip: TIP }
+      }
+    });
+  }
+
+  /* ── 6. BAR CHART DIFICULTAD ── */
   if (document.getElementById('chartDiff')) {
-    const dLabels = ['Baja', 'Media', 'Alta'];
-    const dValues = [
-      {{ prec_avg_diff.get('Bajo', 0) }},
-      {{ prec_avg_diff.get('Medio', 0) }},
-      {{ prec_avg_diff.get('Alto', 0) }}
-    ];
     new Chart(document.getElementById('chartDiff'), {
       type: 'bar',
       data: {
-        labels: dLabels,
+        labels: ['Baja', 'Media', 'Alta'],
         datasets: [{
-          data: dValues,
+          data: [{{ prec_avg_diff.get('Bajo', 0) }}, {{ prec_avg_diff.get('Medio', 0) }}, {{ prec_avg_diff.get('Alto', 0) }}],
           backgroundColor: ['#4e9a66', '#c28c46', '#c25c56'],
-          borderRadius: 4,
-          barPercentage: 0.6
+          borderRadius: 4, barPercentage: 0.5
         }]
       },
       options: {
@@ -503,30 +607,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
-
-  /* ── BAR CHART ERRORES ── */
-  if (document.getElementById('chartErrors')) {
-    new Chart(document.getElementById('chartErrors'), {
-      type: 'bar',
-      data: {
-        labels: {{ errores_labels | safe }},
-        datasets: [{
-          data: {{ errores_values | safe }},
-          backgroundColor: '#c25c56',
-          borderRadius: 4
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { ...TIP, callbacks: { label: c => ` Errores: ${c.parsed.y}` } } },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: '#e2e8f0' } },
-          y: { beginAtZero: true, grid: { color: GRID }, ticks: { precision: 0 } }
-        }
-      }
-    });
-  }
+  {% endif %}
 });
 </script>
-{% endif %}
 {% endblock %}
