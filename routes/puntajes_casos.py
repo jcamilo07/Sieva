@@ -2,7 +2,7 @@
 puntajes_casos.py - Blueprint CRUD para la tabla puntajes_casos.
 """
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from services.api_service import ApiService
 
 bp = Blueprint('puntajes_casos', __name__)
@@ -50,11 +50,17 @@ def index():
 
 @bp.route('/puntajes_casos/crear', methods=['POST'])
 def crear():
+    # Buscar el ID del médico basado en el email del usuario logueado
+    email_usuario = session.get('usuario')
+    medicos = api.listar('medico_experto')
+    medico_id = next((m['id'] for m in medicos if m.get('email') == email_usuario), None)
+
     datos = {
-        'caso_id':    request.form.get('caso_id', 0, type=int),
-        'criterio_id': request.form.get('criterio_id', 0, type=int),
-        'modelo_id':   request.form.get('modelo_id', 1, type=int),
-        'puntaje':     request.form.get('puntaje', 1, type=int)
+        'caso_id':           request.form.get('caso_id', 0, type=int),
+        'criterio_id':       request.form.get('criterio_id', 0, type=int),
+        'modelo_id':         request.form.get('modelo_id', 1, type=int),
+        'puntaje':           request.form.get('puntaje', 1, type=int),
+        'medico_experto_id': medico_id
     }
     exito, mensaje = api.crear(TABLA, datos)
     flash(mensaje, 'success' if exito else 'danger')
@@ -63,10 +69,16 @@ def crear():
 @bp.route('/puntajes_casos/actualizar', methods=['POST'])
 def actualizar():
     valor = request.form.get('id', 0, type=int)
+    # Buscar el ID del médico basado en el email del usuario logueado
+    email_usuario = session.get('usuario')
+    medicos = api.listar('medico_experto')
+    medico_id = next((m['id'] for m in medicos if m.get('email') == email_usuario), None)
+
     datos = {
-        'caso_id':     request.form.get('caso_id', 0, type=int),
-        'criterio_id': request.form.get('criterio_id', 0, type=int),
-        'puntaje':     request.form.get('puntaje', 1, type=int)
+        'caso_id':           request.form.get('caso_id', 0, type=int),
+        'criterio_id':       request.form.get('criterio_id', 0, type=int),
+        'puntaje':           request.form.get('puntaje', 1, type=int),
+        'medico_experto_id': medico_id
     }
     exito, mensaje = api.actualizar(TABLA, CLAVE, valor, datos)
     flash(mensaje, 'success' if exito else 'danger')
