@@ -72,17 +72,17 @@ def init_db():
         }
     ]
 
-    usuarios_con_hash = [
+    usuarios_admins = [
         {
             "nombre": "Juan Pablo Lujan",
             "email": "jpablolujanborraez@gmail.com",
-            "password_hash": "$2b$12$e3mQss2M176GWnZXumbYDeau.D9ahFVruCzubORBRCqcZvJdN7qWO",
+            "password_raw": "@Admin123",
             "rol": "Administrador"
         },
         {
             "nombre": "Juan Camilo Blanquiceth",
             "email": "juancamiloblanquiceth10@gmail.com",
-            "password_hash": "$2b$12$zLD9hmSkKXzhfs2XhcmEBOg1yigx/wZx.jDWzO6V2ruinkwTuLSZu",
+            "password_raw": "@Admin123",
             "rol": "Administrador"
         }
     ]
@@ -104,15 +104,15 @@ def init_db():
         if user_id:
             api.crear("usuario_rol", {"usuario_id": user_id, "rol_id": roles_dict[u["rol"]]})
 
-    # Crear usuarios con hashes existentes (sin encriptar de nuevo)
-    for u in usuarios_con_hash:
-        print(f"Creando usuario (hash existente): {u['nombre']}...")
+    # Crear usuarios admins (se encriptan en el backend)
+    for u in usuarios_admins:
+        print(f"Creando usuario admin: {u['nombre']}...")
         datos_usuario = {
             "nombre": u["nombre"],
             "email": u["email"],
-            "password_hash": u["password_hash"]
+            "password_hash": u["password_raw"]
         }
-        exito, msg = api.crear("usuarios", datos_usuario)
+        exito, msg = api.crear("usuarios", datos_usuario, campos_encriptar="password_hash")
         print(f"Resultado crear {u['email']}: {exito} - {msg}")
 
         users = api.listar("usuarios")

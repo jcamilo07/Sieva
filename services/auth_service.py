@@ -97,7 +97,7 @@ class AuthService:
             
             import os
             # Usar la misma clave y configuración definida en el appsettings.json de la API C#
-            secret = os.environ.get("JWT_SECRET_KEY", "MySuperSecretKey1234567890!@#$%^&*()_+")
+            secret = "MySuperSecretKey1234567890!@#$%^&*()_+"
             payload = {
                 "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": "admin_maestro@sieva.com",
                 "tabla": "usuarios",
