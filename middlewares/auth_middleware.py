@@ -37,7 +37,7 @@ def setup_auth_middleware(app):
             return
             
         # Lógica para Médico u otros roles (basado en Blueprints)
-        if 'Medico' in roles_usuario:
+        if 'Medico' in roles_usuario or 'Medico experto' in roles_usuario:
             blueprints_medico = ['home', 'dashboard', 'casos_clinicos', 'modelos', 'especialidades']
             if blueprint in blueprints_medico:
                 return
