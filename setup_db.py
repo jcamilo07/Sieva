@@ -121,6 +121,18 @@ def init_db():
         if user_id:
             api.crear("usuario_rol", {"usuario_id": user_id, "rol_id": roles_dict[u["rol"]]})
 
+    # 4. Limpiar medico_experto y agregar a Carlos Manuel
+    print("Limpiando medico_experto...")
+    medicos_expertos = api.listar("medico_experto")
+    for me in medicos_expertos:
+        api.eliminar("medico_experto", "id", me["id"])
+    
+    print("Agregando a Carlos Manuel a medico_experto...")
+    api.crear("medico_experto", {
+        "nombre": "Carlos Manuel Castro Londoño",
+        "email": "cmanuel.castro@udea.edu.co"
+    })
+
     print("Proceso finalizado con éxito.")
 
 if __name__ == "__main__":
