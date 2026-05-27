@@ -17,6 +17,12 @@ inspect_out.txt
 hashes.txt
 *.txt.bak
 
+# Scripts de diagnóstico y pruebas sueltas (no van a producción)
+scratch/
+check_*.py
+inspect_*.py
+sincronizar_produccion.py
+
 # VS Code
 .vscode/
 
