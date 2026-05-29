@@ -171,8 +171,31 @@ body, html body, body .page, body main, body main .content, body article.content
 .fkpi-model { font-size:1.25rem; font-weight:900; color:var(--tp); letter-spacing:-0.02em; }
 .fkpi-sub { font-size:.82rem; color:#818cf8; font-weight: 600; }
 
+/* ══ ESTRELLAS GLOBALES (Contadores) ══ */
+.stars-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.star-card {
+  border-radius: var(--rcard); padding: 1.25rem 1rem; text-align: center;
+  background: var(--surf1) !important; border: 1px solid rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.sc-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.sc-val { font-size: 1.8rem; font-weight: 900; line-height: 1; margin-bottom: 0.2rem; color: var(--tp); }
+.sc-label { font-size: 0.8rem; font-weight: 700; color: var(--ts); text-transform: uppercase; letter-spacing: 0.05em; }
+.sc-1 { border-color: rgba(239, 68, 68, 0.3); box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1); }
+.sc-1 .sc-icon { color: #ef4444; filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
+.sc-2 { border-color: rgba(249, 115, 22, 0.3); box-shadow: 0 4px 20px rgba(249, 115, 22, 0.1); }
+.sc-2 .sc-icon { color: #f97316; filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.4)); }
+.sc-3 { border-color: rgba(234, 179, 8, 0.3); box-shadow: 0 4px 20px rgba(234, 179, 8, 0.1); }
+.sc-3 .sc-icon { color: #eab308; filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.4)); }
+.sc-4 { border-color: rgba(132, 204, 22, 0.3); box-shadow: 0 4px 20px rgba(132, 204, 22, 0.1); }
+.sc-4 .sc-icon { color: #84cc16; filter: drop-shadow(0 0 8px rgba(132, 204, 22, 0.4)); }
+.sc-5 { border-color: rgba(16, 185, 129, 0.3); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1); }
+.sc-5 .sc-icon { color: #10b981; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4)); }
+
 @media (max-width:1100px) { .two-col { grid-template-columns: 1fr !important; } .esp-grid { grid-template-columns: repeat(2,1fr) !important; } .footer-kpis { grid-template-columns: repeat(2,1fr) !important; } }
+@media (max-width:800px) { .stars-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width:700px) { .matrix-grid { grid-template-columns: 1fr !important; } .esp-grid { grid-template-columns: 1fr !important; } .footer-kpis { grid-template-columns: 1fr !important; } }
+@media (max-width:500px) { .stars-grid { grid-template-columns: repeat(2, 1fr); } }
 </style>
 {% endblock %}
 
@@ -320,7 +343,52 @@ body, html body, body .page, body main, body main .content, body article.content
     </div>
   </div>
 
-  <!-- 4. TABLA DE RENDIMIENTO -->
+  <!-- 4. DISPERSIÓN DIAGNÓSTICA (ESTRELLAS GLOBALES Y BURBUJAS) -->
+  <div class="dash-card">
+    <div class="card-title-d">Análisis de Dispersión Diagnóstica</div>
+    <div class="card-sub-d">Distribución global de casos por nivel de estrellas y concentración de calificaciones por modelo de IA</div>
+    
+    <!-- Fichas de conteo global -->
+    <div class="stars-grid">
+      <div class="star-card sc-5">
+        <div class="sc-icon"><i class="bi bi-stars"></i></div>
+        <div class="sc-val">{{ estrellas_totales[5] }}</div>
+        <div class="sc-label">5 Estrellas</div>
+      </div>
+      <div class="star-card sc-4">
+        <div class="sc-icon"><i class="bi bi-star-fill"></i></div>
+        <div class="sc-val">{{ estrellas_totales[4] }}</div>
+        <div class="sc-label">4 Estrellas</div>
+      </div>
+      <div class="star-card sc-3">
+        <div class="sc-icon"><i class="bi bi-star-half"></i></div>
+        <div class="sc-val">{{ estrellas_totales[3] }}</div>
+        <div class="sc-label">3 Estrellas</div>
+      </div>
+      <div class="star-card sc-2">
+        <div class="sc-icon"><i class="bi bi-star"></i></div>
+        <div class="sc-val">{{ estrellas_totales[2] }}</div>
+        <div class="sc-label">2 Estrellas</div>
+      </div>
+      <div class="star-card sc-1">
+        <div class="sc-icon"><i class="bi bi-x-circle-fill"></i></div>
+        <div class="sc-val">{{ estrellas_totales[1] }}</div>
+        <div class="sc-label">1 Estrella</div>
+      </div>
+    </div>
+
+    <!-- Bubble Chart -->
+    {% if total_graded > 0 %}
+    <div class="chart-wrap" style="height:380px; margin-top:2rem;"><canvas id="chartBubbles"></canvas></div>
+    {% else %}
+    <div class="empty-state-wrap" style="height:250px;">
+      <i class="bi bi-activity empty-icon" style="color: var(--ts);"></i>
+      <div class="empty-title">Sin datos para dispersión</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- 5. TABLA DE RENDIMIENTO -->
   <div class="dash-card">
     <div class="card-title-d">Tabla de rendimiento clínico completa</div>
     <div class="card-sub-d">Ordenada por la calificación media de veracidad diagnóstica · desglose completo por nivel de dificultad</div>
@@ -492,6 +560,72 @@ document.addEventListener('DOMContentLoaded', function () {
         scales: {
           x: { grid: { display: false }, ticks: { color: '#f8fafc', font: { size: 12, weight: 600 } } },
           y: { beginAtZero: true, min: 0, max: 5, grid: { color: GRID }, ticks: { color: '#94a3b8', callback: v => v + ' ★' } }
+        }
+      }
+    });
+  }
+  {% endif %}
+  {% if total_graded > 0 %}
+  /* ── 4. BUBBLE CHART (DISPERSIÓN DIAGNÓSTICA) ── */
+  if (document.getElementById('chartBubbles')) {
+    const bubbleDataList = {{ bubble_data_list | tojson | safe }};
+    
+    const datasets = [{
+      label: 'Casos Calificados',
+      data: bubbleDataList,
+      backgroundColor: function(context) {
+        const value = context.raw?.y;
+        if(value === 5) return 'rgba(16, 185, 129, 0.7)'; // Esmeralda
+        if(value === 4) return 'rgba(132, 204, 22, 0.7)'; // Lima
+        if(value === 3) return 'rgba(234, 179, 8, 0.7)';  // Amarillo
+        if(value === 2) return 'rgba(249, 115, 22, 0.7)'; // Naranja
+        if(value === 1) return 'rgba(239, 68, 68, 0.7)';  // Rojo
+        return 'rgba(99, 102, 241, 0.7)';
+      },
+      borderColor: function(context) {
+        const value = context.raw?.y;
+        if(value === 5) return '#10b981'; 
+        if(value === 4) return '#84cc16'; 
+        if(value === 3) return '#eab308';  
+        if(value === 2) return '#f97316'; 
+        if(value === 1) return '#ef4444';  
+        return '#6366f1';
+      },
+      borderWidth: 2,
+      hoverRadius: function(context) {
+        return (context.raw?.r || 0) + 2;
+      }
+    }];
+
+    new Chart(document.getElementById('chartBubbles'), {
+      type: 'bubble',
+      data: { datasets: datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            ...TIP,
+            callbacks: {
+              label: function(c) {
+                const item = c.raw;
+                return ` ${item.modelo} — ${item.y} ★ (${item.casos} casos)`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { 
+            type: 'category', 
+            labels: activeModels.map(m => m.corto),
+            grid: { color: 'rgba(255,255,255,0.03)' },
+            ticks: { color: '#f8fafc', font: { size: 12, weight: 600 } } 
+          },
+          y: { 
+            beginAtZero: false, min: 0.5, max: 5.5, 
+            grid: { color: GRID }, 
+            ticks: { color: '#94a3b8', stepSize: 1, callback: v => v + ' ★' } 
+          }
         }
       }
     });

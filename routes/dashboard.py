@@ -238,6 +238,34 @@ def index():
     esp_mas_frecuente = especialidades_data[0][0] if especialidades_data else "Ninguna"
     esp_mas_freq_count = especialidades_data[0][1] if especialidades_data else 0
 
+    # 9. Datos para Burbujas y Contadores de Estrellas
+    estrellas_totales = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    bubble_data_list = []
+
+    for i, item in enumerate(tabla_modelos):
+        mid = item['id']
+        cases_m = [c for c in casos if c.get('modelo_id') == mid]
+        graded_m = [c for c in cases_m if c.get('id') in casos_calificados_dict]
+        
+        counts_m = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        for c in graded_m:
+            cal = casos_calificados_dict[c['id']]
+            if 1 <= cal <= 5:
+                counts_m[cal] += 1
+                estrellas_totales[cal] += 1
+        
+        for star in range(1, 6):
+            # Agregar la burbuja incluso si es 0 (para mantener la alineacion),
+            # o solo si hay casos. Mejor solo si hay > 0 para que no estorben burbujas vacías
+            if counts_m[star] > 0:
+                bubble_data_list.append({
+                    'x': item['corto'],
+                    'y': star,
+                    'r': counts_m[star] * 3, # Multiplicador para hacer visible la burbuja en Chart.js
+                    'casos': counts_m[star],
+                    'modelo': item['corto']
+                })
+
     return render_template(
         'pages/dashboard.html',
         total_casos=total_casos,
@@ -271,4 +299,6 @@ def index():
         mayor_reto_val=mayor_reto_val,
         esp_mas_frecuente=esp_mas_frecuente,
         esp_mas_freq_count=esp_mas_freq_count,
+        estrellas_totales=estrellas_totales,
+        bubble_data_list=bubble_data_list, # json ya serializado en el html
     )
