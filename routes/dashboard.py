@@ -30,7 +30,21 @@ def index():
     especialidades = api.listar('especialidades') or []
     caso_clinico_especialidad = api.listar('caso_clinico_especialidad', limite=10000) or []
 
-    # 2. Cargar calificaciones locales del evaluador médico (SQLite)
+    # 2. Cargar calificaciones desde PostgreSQL (fuente principal: tabla puntajes_casos)
+    puntajes_pg = {}
+    try:
+        puntajes_lista = api.listar('puntajes_casos', limite=10000) or []
+        for p in puntajes_lista:
+            cid = p.get('caso_id')
+            puntaje = p.get('puntaje')
+            if cid and puntaje is not None and int(puntaje) > 0:
+                # Si hay varios puntajes para el mismo caso, guardar el más alto (o el último)
+                if cid not in puntajes_pg or int(puntaje) > puntajes_pg[cid]:
+                    puntajes_pg[cid] = int(puntaje)
+    except Exception as ex:
+        print(f"[ERROR] No se pudo leer puntajes_casos de PostgreSQL: {ex}")
+
+    # 2b. Cargar caché local SQLite (puede sobreescribir si hay datos más recientes localmente)
     locales = {}
     try:
         conn = sqlite3.connect(DB_PATH)
@@ -43,18 +57,24 @@ def index():
         print(f"[ERROR] No se pudo leer local_casos_clinicos de SQLite: {ex}")
 
     # 3. Determinar casos evaluados reales
+    # Combinar: PostgreSQL como base, SQLite local como override si tiene valor
     total_casos = len(casos)
     total_modelos = len(modelos)
     total_especialidades = len(especialidades)
 
     casos_calificados_dict = {}
+    # Primero tomar los puntajes de PostgreSQL
+    for cid, cal in puntajes_pg.items():
+        if cal > 0:
+            casos_calificados_dict[cid] = cal
+    # Luego aplicar los del caché local como override (si existen y son válidos)
     for case in casos:
         cid = case.get('id')
         local_data = locales.get(cid)
         if local_data:
             cal = local_data.get('calificacion_ia')
-            if cal is not None and cal > 0:
-                casos_calificados_dict[cid] = cal
+            if cal is not None and int(cal) > 0:
+                casos_calificados_dict[cid] = int(cal)
 
     total_graded = len(casos_calificados_dict)
     total_pending = total_casos - total_graded
