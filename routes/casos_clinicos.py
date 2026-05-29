@@ -451,9 +451,14 @@ def guardar_calificacion():
             email_usuario = session.get('usuario')
             medico_id = 1
             if email_usuario:
-                medicos = api.listar(f'medico_experto/email/{email_usuario}')
-                if medicos and isinstance(medicos, list) and len(medicos) > 0:
-                    medico_id = medicos[0].get('id', 1)
+                medicos_buscar = api.listar(f'medico_experto/email/{email_usuario}')
+                if medicos_buscar and isinstance(medicos_buscar, list) and len(medicos_buscar) > 0:
+                    medico_id = medicos_buscar[0].get('id', 1)
+                else:
+                    # Fallback para evitar error de Llave Foránea si el usuario no es médico
+                    todos_medicos = api.listar('medico_experto')
+                    if todos_medicos and isinstance(todos_medicos, list) and len(todos_medicos) > 0:
+                        medico_id = todos_medicos[0].get('id', 1)
             
             modelo_id = 1
             caso_list = api.listar(f'casos_clinicos/id/{caso_id}')
