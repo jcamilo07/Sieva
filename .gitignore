@@ -17,10 +17,18 @@ inspect_out.txt
 hashes.txt
 *.txt.bak
 
-# Scripts de diagnóstico y pruebas sueltas (no van a producción)
+# Scripts de diagnóstico, pruebas y migraciones (no van a producción)
 scratch/
 check_*.py
 inspect_*.py
+test_*.py
+sim_*.py
+diagnostico_*.py
+poblar_*.py
+dump_*.py
+migrar_*.py
+analizar_*.py
+find_*.py
 sincronizar_produccion.py
 
 # VS Code
