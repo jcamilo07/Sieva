@@ -25,9 +25,10 @@ def index():
     """Dashboard de Veracidad / Criterio #1 en tiempo real."""
 
     # 1. Obtener datos estructurales reales de la API REST (PostgreSQL)
-    modelos = api.listar('modelos') or []
-    casos = api.listar('casos_clinicos') or []
-    especialidades = api.listar('especialidades') or []
+    # IMPORTANTE: limite=10000 evita el timeout de Gunicorn (la llamada sin limite tarda ~47s)
+    modelos = api.listar('modelos', limite=10000) or []
+    casos = api.listar('casos_clinicos', limite=10000) or []
+    especialidades = api.listar('especialidades', limite=10000) or []
     caso_clinico_especialidad = api.listar('caso_clinico_especialidad', limite=10000) or []
 
     # 2. Cargar calificaciones desde PostgreSQL (fuente principal: tabla puntajes_casos)
