@@ -49,7 +49,7 @@ class ApiService:
                 from datetime import datetime, timedelta, timezone
                 import os
                 # Misma clave usada por la API C#
-                secret = "MySuperSecretKey1234567890!@#$%^&*()_+"
+                secret = r"MySuperSecretKey1234567890!@#$%^&*()_+"
                 payload = {
                     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": "public_viewer@sieva.com",
                     "tabla": "usuarios",

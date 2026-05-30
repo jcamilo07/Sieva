@@ -69,15 +69,15 @@ def _eliminar_relacion(caso_id, especialidad_id):
 
 def _crear_relacion(caso_id, especialidad_id):
     try:
+        caso_id_int = int(caso_id)
+        especialidad_id_int = int(especialidad_id)
+        
         relaciones = api.listar(TABLA_ESP, limite=10000)
-        caso_id = int(caso_id)
-        especialidad_id = int(especialidad_id)
-
-        # Buscar si ya existe (activa o descartada)
+        # Extraer existentes de forma segura
         existente = next(
             (r for r in relaciones
-             if int(r.get('caso_id', 0)) == caso_id
-             and int(r.get('especialidad_id', 0)) == especialidad_id),
+             if int(r.get('caso_id', 0)) == caso_id_int
+             and int(r.get('especialidad_id', 0)) == especialidad_id_int),
             None
         )
 
@@ -85,8 +85,8 @@ def _crear_relacion(caso_id, especialidad_id):
             if existente.get('descartado', False):
                 # Reactivar la relación descartada
                 exito, mensaje = api.actualizar_compuesta(TABLA_ESP, {
-                    'caso_id': caso_id,
-                    'especialidad_id': especialidad_id
+                    'caso_id': caso_id_int,
+                    'especialidad_id': especialidad_id_int
                 }, {'descartado': False})
                 if not exito:
                     print(f"Error reactivando relacion caso {caso_id} esp {especialidad_id}: {mensaje}")
@@ -101,14 +101,13 @@ def _crear_relacion(caso_id, especialidad_id):
             for e in especialidades_lista:
                 if e.get('id') == especialidad_id:
                     nombre_esp = e.get('nombre', '')
-                    break
-
-        exito, mensaje = api.crear(TABLA_ESP, {
-            'caso_id':         caso_id,
-            'especialidad_id': especialidad_id,
-            'descartado':      False,
-            'especialidad_nombre': nombre_esp
-        })
+            # (buscar nombre real si es necesario, o la API/UI lo asume)
+            exito, mensaje = api.crear(TABLA_ESP, {
+                'caso_id':         caso_id_int,
+                'especialidad_id': especialidad_id_int,
+                'descartado':      False,
+                'especialidad_nombre': nombre_esp
+            })
         if not exito:
             print(f"Error creando relacion caso {caso_id} esp {especialidad_id}: {mensaje}")
         return exito
@@ -356,13 +355,16 @@ def exportar_csv():
             ename = especialidades.get(r['especialidad_id'], 'N/A')
             caso_esp_map.setdefault(cid, []).append(ename)
 
-    # Calificaciones locales
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    c_local = conn.cursor()
-    c_local.execute('SELECT * FROM local_casos_clinicos')
-    locales = {row['id']: row for row in c_local.fetchall()}
-    conn.close()
+    # Calificaciones y observaciones desde PostgreSQL (fuente de verdad)
+    puntajes_lista = api.listar('puntajes_casos')
+    puntajes_map = {}  # caso_id -> {puntaje, observacion}
+    for p in puntajes_lista:
+        cid = p.get('caso_id')
+        if cid:
+            puntajes_map[cid] = {
+                'puntaje':    p.get('puntaje', ''),
+                'observacion': p.get('observacion', '') or ''
+            }
 
     # 2. Construir el CSV en memoria
     si = StringIO()
@@ -374,9 +376,10 @@ def exportar_csv():
         m_name = modelos.get(r.get('modelo_id'), '-')
         esps = ", ".join(caso_esp_map.get(rid, []))
         
-        # Data local
-        stars = locales[rid]['calificacion_ia'] if rid in locales else ""
-        obs = locales[rid]['observacion'] if rid in locales else ""
+        # Data de PostgreSQL
+        pg_data = puntajes_map.get(rid, {})
+        stars = pg_data.get('puntaje', '')
+        obs = pg_data.get('observacion', '')
 
         cw.writerow([
             rid,
@@ -406,115 +409,111 @@ def exportar_csv():
 @bp.route('/casos_clinicos/calificacion/guardar', methods=['POST'])
 def guardar_calificacion():
     """
-    Guarda la calificación y la observación en la BD PostgreSQL via la API genérica.
-    - observacion  → tabla casos_clinicos,  columna observacion  (PUT /api/casos_clinicos/id/{id})
-    - calificacion → tabla puntajes_casos,  columna puntaje      (POST o PUT /api/puntajes_casos)
+    Guarda la calificación y la observación directamente en PostgreSQL.
+    - puntaje     → tabla puntajes_casos, columna puntaje      (POST o PUT)
+    - observacion → tabla puntajes_casos, columna observacion  (POST o PUT)
+    El SQLite solo se usa como caché de visualización rápida.
     """
     datos = request.get_json()
     caso_id      = datos.get('caso_id')
     calificacion = datos.get('calificacion')
-    observacion  = datos.get('observacion')
+    observacion  = datos.get('observacion', '')
 
     if not caso_id:
         return jsonify({'ok': False, 'error': 'Falta el ID del caso'}), 400
 
     errores = []
 
-    # ── 1. Guardar observación en casos_clinicos (BD PostgreSQL) ──────────
-    if observacion is not None:
-        exito_obs, msg_obs = api.actualizar(
-            'casos_clinicos', 'id', caso_id,
-            {'observacion': observacion}
-        )
-        if not exito_obs:
-            errores.append(f'Observación: {msg_obs}')
+    # ── Resolver medico_experto_id ─────────────────────────────────────────
+    from flask import session
+    email_usuario = session.get('usuario')
+    medico_id = None
+    if email_usuario:
+        medicos_buscar = api.listar(f'medico_experto/email/{email_usuario}')
+        if medicos_buscar and isinstance(medicos_buscar, list) and len(medicos_buscar) > 0:
+            medico_id = medicos_buscar[0].get('id')
+    if not medico_id:
+        todos_medicos = api.listar('medico_experto')
+        if todos_medicos and isinstance(todos_medicos, list) and len(todos_medicos) > 0:
+            medico_id = todos_medicos[0].get('id', 1)
+    if not medico_id:
+        medico_id = 1
 
-    # ── 2. Guardar puntaje en puntajes_casos (BD PostgreSQL) ───────────────
-    if 'calificacion' in datos:
-        calificacion = datos['calificacion']
-        
-        existentes = api.listar(f'puntajes_casos/caso_id/{caso_id}')
-        reg_id = None
-        if existentes and isinstance(existentes, list) and len(existentes) > 0:
-            reg = existentes[0] if isinstance(existentes[0], dict) else {}
-            reg_id = reg.get('id')
+    # ── Resolver modelo_id del caso ───────────────────────────────────────
+    modelo_id = 1
+    caso_list = api.listar(f'casos_clinicos/id/{caso_id}')
+    if caso_list and isinstance(caso_list, list) and len(caso_list) > 0:
+        modelo_id = caso_list[0].get('modelo_id', 1)
 
-        if calificacion is None or calificacion == 0:
-            # Deselección: Eliminar el registro si existe
-            if reg_id:
-                exito_punt, msg_punt = api.eliminar('puntajes_casos', 'id', reg_id)
-                if not exito_punt:
-                    errores.append(f'Puntaje BD (Eliminar): {msg_punt}')
-        else:
-            # Guardar o actualizar
-            from flask import session
-            email_usuario = session.get('usuario')
-            medico_id = 1
-            if email_usuario:
-                medicos_buscar = api.listar(f'medico_experto/email/{email_usuario}')
-                if medicos_buscar and isinstance(medicos_buscar, list) and len(medicos_buscar) > 0:
-                    medico_id = medicos_buscar[0].get('id', 1)
-                else:
-                    # Fallback para evitar error de Llave Foránea si el usuario no es médico
-                    todos_medicos = api.listar('medico_experto')
-                    if todos_medicos and isinstance(todos_medicos, list) and len(todos_medicos) > 0:
-                        medico_id = todos_medicos[0].get('id', 1)
-            
-            modelo_id = 1
-            caso_list = api.listar(f'casos_clinicos/id/{caso_id}')
-            if caso_list and isinstance(caso_list, list) and len(caso_list) > 0:
-                modelo_id = caso_list[0].get('modelo_id', 1)
-                
-            criterio_id = 1
-            
-            if reg_id:
-                exito_punt, msg_punt = api.actualizar(
-                    'puntajes_casos', 'id', reg_id,
-                    {'puntaje': calificacion}
-                )
-                if not exito_punt:
-                    errores.append(f'Puntaje BD (Actualizar): {msg_punt}')
-            else:
-                nuevo_puntaje = {
-                    'modelo_id': int(modelo_id),
-                    'caso_id': int(caso_id),
+    criterio_id = 1
+
+    # ── Buscar si ya existe un puntaje para este caso ─────────────────────
+    existentes = api.listar(f'puntajes_casos/caso_id/{caso_id}')
+    reg_id = None
+    if existentes and isinstance(existentes, list) and len(existentes) > 0:
+        reg = existentes[0] if isinstance(existentes[0], dict) else {}
+        reg_id = reg.get('id')
+
+    # ── Guardar o actualizar en puntajes_casos (puntaje + observacion) ────
+    if calificacion is None or calificacion == 0:
+        # Deselección: eliminar el registro si existe
+        if reg_id:
+            exito_punt, msg_punt = api.eliminar('puntajes_casos', 'id', reg_id)
+            if not exito_punt:
+                errores.append(f'Puntaje BD (Eliminar): {msg_punt}')
+    else:
+        if reg_id:
+            # Actualizar puntaje Y observacion en el registro existente
+            exito_punt, msg_punt = api.actualizar(
+                'puntajes_casos', 'id', reg_id,
+                {
+                    'puntaje':     int(calificacion),
+                    'observacion': observacion or '',
+                    'modelo_id':   int(modelo_id),
+                    'caso_id':     int(caso_id),
                     'criterio_id': int(criterio_id),
-                    'medico_experto_id': int(medico_id),
-                    'puntaje': int(calificacion)
+                    'medico_experto_id': int(medico_id)
                 }
-                exito_punt, msg_punt = api.crear('puntajes_casos', nuevo_puntaje)
-                if not exito_punt:
-                    errores.append(f'Puntaje BD (Crear): {msg_punt}')
+            )
+            if not exito_punt:
+                errores.append(f'Puntaje BD (Actualizar): {msg_punt}')
+        else:
+            # Crear nuevo registro con puntaje Y observacion
+            nuevo_puntaje = {
+                'modelo_id':         int(modelo_id),
+                'caso_id':           int(caso_id),
+                'criterio_id':       int(criterio_id),
+                'medico_experto_id': int(medico_id),
+                'puntaje':           int(calificacion),
+                'observacion':       observacion or ''
+            }
+            exito_punt, msg_punt = api.crear('puntajes_casos', nuevo_puntaje)
+            if not exito_punt:
+                errores.append(f'Puntaje BD (Crear): {msg_punt}')
 
-    # ── 3. Actualizar caché SQLite local (muestra inmediata en UI) ─────────
+    # ── Actualizar caché SQLite local (solo para visualización rápida) ────
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         c.execute('SELECT id FROM local_casos_clinicos WHERE id = ?', (caso_id,))
         existe = c.fetchone()
-        
-        # Preparar variables para query (usamos explícitamente None para nulos en BD local)
-        val_calif = calificacion if 'calificacion' in datos and calificacion not in [0, None] else None
-        
+        val_calif = int(calificacion) if calificacion and calificacion != 0 else None
         if existe:
-            if 'calificacion' in datos and 'observacion' in datos:
-                c.execute('UPDATE local_casos_clinicos SET calificacion_ia = ?, observacion = ? WHERE id = ?',
-                          (val_calif, observacion, caso_id))
-            elif 'calificacion' in datos:
-                c.execute('UPDATE local_casos_clinicos SET calificacion_ia = ? WHERE id = ?',
-                          (val_calif, caso_id))
-            elif 'observacion' in datos:
-                c.execute('UPDATE local_casos_clinicos SET observacion = ? WHERE id = ?',
-                          (observacion, caso_id))
+            c.execute(
+                'UPDATE local_casos_clinicos SET calificacion_ia = ?, observacion = ? WHERE id = ?',
+                (val_calif, observacion or '', caso_id)
+            )
         else:
-            c.execute('INSERT INTO local_casos_clinicos (id, calificacion_ia, observacion) VALUES (?, ?, ?)',
-                      (caso_id, val_calif, observacion or ''))
+            c.execute(
+                'INSERT INTO local_casos_clinicos (id, calificacion_ia, observacion) VALUES (?, ?, ?)',
+                (caso_id, val_calif, observacion or '')
+            )
         conn.commit()
         conn.close()
     except Exception as ex_local:
-        errores.append(f'Cache local: {str(ex_local)}')
+        print(f'[WARN] Cache SQLite: {ex_local}')  # No bloquear por error de caché
 
     if errores:
         return jsonify({'ok': False, 'errores': errores}), 500
 
-    return jsonify({'ok': True, 'mensaje': 'Guardado correctamente'})
+    return jsonify({'ok': True, 'mensaje': 'Guardado correctamente en PostgreSQL'})
